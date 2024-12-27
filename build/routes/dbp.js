@@ -1,0 +1,55 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const express_validator_1 = require("express-validator");
+const validar_jwt_1 = require("../middlewares/validar-jwt");
+const validar_campos_1 = require("../middlewares/validar-campos");
+const dbpCtrl = __importStar(require("../controllers/dbp"));
+const router = (0, express_1.Router)();
+// Cliente
+router.get("/obtener/:mid", validar_jwt_1.validarJWT, dbpCtrl.obtenerDBPSModulo);
+router.post("/crear/:pid", [
+    (0, express_validator_1.check)("cid", "El id de curso es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("mid", "El id del módulo es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("pid", "El id de la pregunta es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("respuesta", "La respuesta de la pregunta es obligatoria").notEmpty(),
+    (0, express_validator_1.check)("estado", "El estado de la pregunta es obligatorio").notEmpty(),
+    validar_campos_1.validarCampos,
+    validar_jwt_1.validarJWT,
+], dbpCtrl.crearDBP);
+// router.get('/obtener/:cid/:dbp', validarJWT, dbpCtrl.obtenerDBPCurso);
+// Admin
+router.get("/admin/obtener/:mid", validar_jwt_1.validarAdminJWT, dbpCtrl.obtenerDBPSModulo);
+router.post("/admin/crear/:pid", [
+    (0, express_validator_1.check)("cid", "El id de curso es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("mid", "El id del módulo es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("pid", "El id de la pregunta es obligatorio").notEmpty(),
+    (0, express_validator_1.check)("respuesta", "La respuesta de la pregunta es obligatoria").notEmpty(),
+    (0, express_validator_1.check)("estado", "El estado de la pregunta es obligatorio").notEmpty(),
+    validar_campos_1.validarCampos,
+    validar_jwt_1.validarAdminJWT,
+], dbpCtrl.crearDBP);
+exports.default = router;
