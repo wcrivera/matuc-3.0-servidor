@@ -170,6 +170,8 @@ export const obtenerDiapositivaSeccion: RequestHandler = async (req, res) => {
       });
     }
 
+    console.log(matricula)
+
     if (matricula.rol === "Profesor" || matricula.rol === "Ayudante") {
       const diapositiva = await Diapositiva.findOne({ sid: sid });
       return res.json({
@@ -233,6 +235,7 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
 
 // ADMINISTRADOR
 export const crearDiapositiva: RequestHandler = async (req, res) => {
+  
   try {
     const { uid } = req.params;
     const usuario = await Usuario.findById(uid);
