@@ -2,9 +2,6 @@ import { RequestHandler } from "express";
 import Question from "../models/question";
 import Usuario from "../models/usuario";
 import Matricula from "../models/matricula";
-import Activo from "../models/activo";
-import Modulo from "../models/modulo";
-import Seccion from "../models/seccion";
 
 export const obtenerQuestionsModulo: RequestHandler = async (req, res) => {
   const { mid } = req.params;
@@ -77,7 +74,26 @@ export const obtenerQuestionsModulo: RequestHandler = async (req, res) => {
         width: false,
         alternativas: false,
       }
-    );
+    ).sort({ numero: 1 });
+
+    return res.json({
+      ok: true,
+      questions,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
+export const obtenerQuestionsSeccion: RequestHandler = async (req, res) => {
+  const { sid } = req.params;
+
+  try {
+    const questions = await Question.find({ sid: sid }).sort({ numero: 1 });
 
     return res.json({
       ok: true,

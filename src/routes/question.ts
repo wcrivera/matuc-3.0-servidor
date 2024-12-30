@@ -11,6 +11,7 @@ const router = Router();
 // Cliente
 router.get("/obtener/:mid", validarJWT, questionCtrl.obtenerQuestionsModulo);
 router.get("/obtener/seccion/:qid", validarJWT, questionCtrl.obtenerQuestionSeccion);
+router.get("/obtener/questions/seccion/:sid", validarJWT, questionCtrl.obtenerQuestionsSeccion);
 // Admin
 router.get(
   "/admin/obtener/:mid",

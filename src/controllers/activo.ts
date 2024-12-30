@@ -30,7 +30,7 @@ export const obtenerActivoSeccion: RequestHandler = async (req, res) => {
   try {
     const activo = await Activo.findOne({ sid: sid });
 
-    console.log(activo)
+    // console.log(activo)
 
     if (!activo) {
       return res.status(404).json({
@@ -74,7 +74,7 @@ export const crearActivo: RequestHandler = async (req, res) => {
       //   msg: "Ya existe este dato",
       // });
 
-      console.log(activoquestion)
+      // console.log(activoquestion)
 
       return res.json({
         ok: false,

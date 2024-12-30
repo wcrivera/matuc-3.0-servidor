@@ -170,7 +170,7 @@ export const obtenerDiapositivaSeccion: RequestHandler = async (req, res) => {
       });
     }
 
-    console.log(matricula)
+    // console.log(matricula)
 
     if (matricula.rol === "Profesor" || matricula.rol === "Ayudante") {
       const diapositiva = await Diapositiva.findOne({ sid: sid });
