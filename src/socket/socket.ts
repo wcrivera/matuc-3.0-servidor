@@ -1,6 +1,7 @@
 import { Server as WebSocketServer } from "socket.io";
 import { comprobarJWT } from "../helpers/jwt";
 import {
+  ActivoEjercicio,
   ActivoSeccion,
   conectarUsuario,
   crearDBQ,
@@ -91,6 +92,18 @@ export default class Sockets {
       socket.on("dbq", async (activo) => {
         const payloadActivo = await crearDBQ({ ...activo, uid: uid });
         return this.io.to(uid).emit("dbq-cliente", payloadActivo.payload);
+      });
+
+      // TODO: Actualizar activo ejercicio
+      socket.on("activo-ejercicio", async (ejercicio) => {
+        if (matricula.rol === "Profesor") {
+          const payloadActivo = await ActivoEjercicio(ejercicio);
+          return this.io
+            .to(sala)
+            .emit("activo-ejercicio", payloadActivo.payload);
+        }
+
+        this.io.to(sala).emit("activo-ejercicio", ejercicio);
       });
     });
   }

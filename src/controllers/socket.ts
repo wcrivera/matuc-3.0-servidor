@@ -2,6 +2,7 @@ import Matricula from "../models/matricula";
 import Usuario from "../models/usuario";
 import Activo from "../models/activo";
 import DBQ from "../models/dbq";
+import Ejercicio from "../models/ejercicio";
 
 export const conectarUsuario = async (mid: string) => {
   try {
@@ -107,6 +108,34 @@ export const ActivoSeccion = async (activo: ActivoState) => {
   } catch (error) {
     console.log(error);
     return { ok: false, payload: activo };
+  }
+};
+
+type EjercicioState = {
+  id: string;
+  activo: boolean;
+};
+
+export const ActivoEjercicio = async (ejercicio: EjercicioState) => {
+  const { id, activo } = ejercicio;
+
+  try {
+    const ejercicioEncontrado = await Ejercicio.findById(id);
+
+    if (ejercicioEncontrado) {
+      ejercicioEncontrado.activo = activo;
+      const ejercicioEditado = await Ejercicio.findByIdAndUpdate(
+        ejercicioEncontrado._id,
+        ejercicioEncontrado,
+        { new: true }
+      );
+      return { ok: true, payload: ejercicio };
+    }
+
+    return { ok: false, payload: ejercicio };
+  } catch (error) {
+    console.log(error);
+    return { ok: false, payload: ejercicio };
   }
 };
 
