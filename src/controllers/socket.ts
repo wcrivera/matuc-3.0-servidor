@@ -112,15 +112,15 @@ export const ActivoSeccion = async (activo: ActivoState) => {
 };
 
 type EjercicioState = {
-  id: string;
+  eid: string;
   activo: boolean;
 };
 
 export const ActivoEjercicio = async (ejercicio: EjercicioState) => {
-  const { id, activo } = ejercicio;
+  const { eid, activo } = ejercicio;
 
   try {
-    const ejercicioEncontrado = await Ejercicio.findById(id);
+    const ejercicioEncontrado = await Ejercicio.findById(eid);
 
     if (ejercicioEncontrado) {
       ejercicioEncontrado.activo = activo;
@@ -129,7 +129,7 @@ export const ActivoEjercicio = async (ejercicio: EjercicioState) => {
         ejercicioEncontrado,
         { new: true }
       );
-      return { ok: true, payload: ejercicio };
+      return { ok: true, payload: ejercicioEditado };
     }
 
     return { ok: false, payload: ejercicio };
