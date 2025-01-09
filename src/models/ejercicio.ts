@@ -8,6 +8,7 @@ interface Ejercicio {
   multiple: { estado: boolean; columnas: number };
   enunciado?: string;
   titulo?: string;
+  activo: boolean;
 }
 
 const EjercicioSchema = new Schema<Ejercicio>({
@@ -43,6 +44,11 @@ const EjercicioSchema = new Schema<Ejercicio>({
   titulo: {
     type: String,
     trim: true,
+  },
+  activo: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 
