@@ -68,11 +68,11 @@ export const obtenerQuestionsModulo: RequestHandler = async (req, res) => {
       {
         // cid: false,
         // mid: false,
-        tipo: false,
-        enunciado: false,
-        respuesta: false,
-        width: false,
-        alternativas: false,
+        // tipo: false,
+        // enunciado: false,
+        // respuesta: false,
+        // width: false,
+        // alternativas: false,
       }
     ).sort({ numero: 1 });
 
