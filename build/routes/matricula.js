@@ -31,9 +31,9 @@ const matriculaCtrl = __importStar(require("../controllers/matricula"));
 const router = (0, express_1.Router)();
 // Cliente
 router.get('/obtener', validar_jwt_1.validarJWT, matriculaCtrl.obtenerMatriculas);
-router.get('/obtener/:cid', validar_jwt_1.validarJWT, matriculaCtrl.obtenerMatricula);
-router.post('/crear/:cid', [
-    (0, express_validator_1.check)('cid', 'El id del curso es obligatorio').notEmpty(),
+router.get('/obtener/:gid', validar_jwt_1.validarJWT, matriculaCtrl.obtenerMatricula);
+router.post('/crear/:gid', [
+    (0, express_validator_1.check)('gid', 'El id del grupo es obligatorio').notEmpty(),
     validar_campos_1.validarCampos,
     validar_jwt_1.validarJWT
 ], matriculaCtrl.crearMatriculaCurso);

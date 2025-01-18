@@ -15,35 +15,44 @@ const mongoose_1 = require("mongoose");
 const EjercicioSchema = new mongoose_1.Schema({
     cid: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Curso'
+        ref: "Curso",
     },
     mid: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Modulo'
+        ref: "Modulo",
     },
     numero: {
         type: Number,
         required: true,
-        trim: true
+        trim: true,
     },
     multiple: {
         estado: {
             type: Boolean,
             required: true,
-            default: false
+            default: false,
         },
         columnas: {
             type: Number,
             required: true,
-            default: 1
-        }
+            default: 1,
+        },
     },
     enunciado: {
         type: String,
-        trim: true
-    }
+        trim: true,
+    },
+    titulo: {
+        type: String,
+        trim: true,
+    },
+    activo: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
 });
-EjercicioSchema.method('toJSON', function () {
+EjercicioSchema.method("toJSON", function () {
     const _a = this.toObject(), { _id } = _a, object = __rest(_a, ["_id"]);
     object.eid = _id;
     return object;

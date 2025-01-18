@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.editarQuestion = exports.eliminarQuestion = exports.crearQuestion = exports.obtenerQuestionSeccion = exports.obtenerQuestionsModulo = void 0;
+exports.editarQuestion = exports.eliminarQuestion = exports.crearQuestion = exports.obtenerQuestionSeccion = exports.obtenerQuestionsSeccion = exports.obtenerQuestionsModulo = void 0;
 const question_1 = __importDefault(require("../models/question"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const matricula_1 = __importDefault(require("../models/matricula"));
@@ -68,14 +68,14 @@ const obtenerQuestionsModulo = (req, res) => __awaiter(void 0, void 0, void 0, f
         //   }
         // );
         const questions = yield question_1.default.find({ mid: mid }, {
-            // cid: false,
-            // mid: false,
-            tipo: false,
-            enunciado: false,
-            respuesta: false,
-            width: false,
-            alternativas: false,
-        });
+        // cid: false,
+        // mid: false,
+        // tipo: false,
+        // enunciado: false,
+        // respuesta: false,
+        // width: false,
+        // alternativas: false,
+        }).sort({ numero: 1 });
         return res.json({
             ok: true,
             questions,
@@ -90,6 +90,24 @@ const obtenerQuestionsModulo = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.obtenerQuestionsModulo = obtenerQuestionsModulo;
+const obtenerQuestionsSeccion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sid } = req.params;
+    try {
+        const questions = yield question_1.default.find({ sid: sid }).sort({ numero: 1 });
+        return res.json({
+            ok: true,
+            questions,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Hable con el administrador",
+        });
+    }
+});
+exports.obtenerQuestionsSeccion = obtenerQuestionsSeccion;
 const obtenerQuestionSeccion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { qid } = req.params;
     // console.log(qid);

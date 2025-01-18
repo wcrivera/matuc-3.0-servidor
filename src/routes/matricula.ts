@@ -10,9 +10,9 @@ const router = Router();
 
 // Cliente
 router.get('/obtener', validarJWT, matriculaCtrl.obtenerMatriculas);
-router.get('/obtener/:cid', validarJWT, matriculaCtrl.obtenerMatricula);
-router.post('/crear/:cid', [
-    check('cid', 'El id del curso es obligatorio').notEmpty(),
+router.get('/obtener/:gid', validarJWT, matriculaCtrl.obtenerMatricula);
+router.post('/crear/:gid', [
+    check('gid', 'El id del grupo es obligatorio').notEmpty(),
     validarCampos,
     validarJWT
 ], matriculaCtrl.crearMatriculaCurso);

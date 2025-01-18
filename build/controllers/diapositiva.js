@@ -155,6 +155,7 @@ const obtenerDiapositivaSeccion = (req, res) => __awaiter(void 0, void 0, void 0
                 msg: "Matrícula no existe",
             });
         }
+        // console.log(matricula)
         if (matricula.rol === "Profesor" || matricula.rol === "Ayudante") {
             const diapositiva = yield diapositiva_1.default.findOne({ sid: sid });
             return res.json({

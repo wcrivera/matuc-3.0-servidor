@@ -4,7 +4,7 @@ import Usuario from "../models/usuario";
 import Curso from "../models/curso";
 import Grupo from "../models/grupo";
 import Matricula from "../models/matricula";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 export const obtenerCursos: RequestHandler = async (req, res) => {
   const { uid } = req.params;
@@ -29,15 +29,34 @@ export const obtenerCursos: RequestHandler = async (req, res) => {
       });
     }
 
-    const cursos = await Curso.find({ publico: true, activo: true }).sort(
-      "sigla"
+    const cursosUsuario = (await Matricula.find({ uid: uid })).map((item) =>
+      item.cid.toString()
     );
+
+    const cursos = await Curso.find(
+      { _id: { $in: cursosUsuario } }
+      // { publico: true, activo: true }
+    ).sort("sigla");
+
+    console.log(cursos);
 
     return res.json({
       ok: true,
       msg: "Cursos obtenidos",
       cursos,
     });
+
+    // Todos los cursos publicos y activos
+
+    // const cursos = await Curso.find({ publico: true, activo: true }).sort(
+    //   "sigla"
+    // );
+
+    // return res.json({
+    //   ok: true,
+    //   msg: "Cursos obtenidos",
+    //   cursos,
+    // });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

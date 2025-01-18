@@ -32,10 +32,10 @@ export const obtenerMatriculas: RequestHandler = async (req, res) => {
 };
 
 export const obtenerMatricula: RequestHandler = async (req, res) => {
-  const { uid, cid } = req.params;
+  const { uid, gid } = req.params;
 
   try {
-    const matricula = await Matricula.findOne({ uid: uid, cid: cid });
+    const matricula = await Matricula.findOne({ uid: uid, gid: gid });
 
     if (!matricula) {
       return res.json({
@@ -61,9 +61,9 @@ export const obtenerMatricula: RequestHandler = async (req, res) => {
 export const crearMatriculaCurso: RequestHandler = async (req, res) => {
   try {
     const { uid } = req.params;
-    const { cid } = req.body;
+    const { cid, gid } = req.body;
 
-    const matricula = await Matricula.findOne({ cid: cid, uid: uid });
+    const matricula = await Matricula.findOne({ gid: gid, uid: uid });
 
     if (matricula) {
       return res.json({
@@ -73,42 +73,21 @@ export const crearMatriculaCurso: RequestHandler = async (req, res) => {
       });
     }
 
-    const grupo = await Grupo.findOne({ cid: cid });
+    const nuevaMatricula = new Matricula({
+      cid: cid,
+      gid: gid,
+      uid: uid,
+      rol: "Estudiante",
+      online: false,
+    });
+    const matriculaCreada = await nuevaMatricula.save();
 
-    if (grupo) {
-      const nuevaMatricula = new Matricula({
-        cid,
-        gid: grupo._id,
-        uid: uid,
-        rol: "Estudiante",
-        online: false,
-      });
-      const matriculaCreada = await nuevaMatricula.save();
+    return res.json({
+      ok: true,
+      msg: "Matricula creada",
+      matricula: matriculaCreada,
+    });
 
-      return res.json({
-        ok: true,
-        msg: "Matricula creada",
-        matricula: matriculaCreada,
-      });
-    } else {
-      const nuevoGrupo = new Grupo({ cid: cid, grupo: 100 });
-      const grupoCreado = await nuevoGrupo.save();
-
-      const nuevaMatricula = new Matricula({
-        cid,
-        gid: grupoCreado._id,
-        uid,
-        rol: "Estudiante",
-        online: false,
-      });
-      const matriculaCreada = await nuevaMatricula.save();
-
-      return res.json({
-        ok: true,
-        msg: "Matricula creada",
-        matricula: matriculaCreada,
-      });
-    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -116,6 +95,63 @@ export const crearMatriculaCurso: RequestHandler = async (req, res) => {
       msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
     });
   }
+  // try {
+  //   const { uid } = req.params;
+  //   const { cid } = req.body;
+
+  //   const matricula = await Matricula.findOne({ cid: cid, uid: uid });
+
+  //   if (matricula) {
+  //     return res.json({
+  //       ok: true,
+  //       msg: "Estudiante matriculado",
+  //       matricula,
+  //     });
+  //   }
+
+  //   const grupo = await Grupo.findOne({ cid: cid });
+
+  //   if (grupo) {
+  //     const nuevaMatricula = new Matricula({
+  //       cid,
+  //       gid: grupo._id,
+  //       uid: uid,
+  //       rol: "Estudiante",
+  //       online: false,
+  //     });
+  //     const matriculaCreada = await nuevaMatricula.save();
+
+  //     return res.json({
+  //       ok: true,
+  //       msg: "Matricula creada",
+  //       matricula: matriculaCreada,
+  //     });
+  //   } else {
+  //     const nuevoGrupo = new Grupo({ cid: cid, grupo: 100 });
+  //     const grupoCreado = await nuevoGrupo.save();
+
+  //     const nuevaMatricula = new Matricula({
+  //       cid,
+  //       gid: grupoCreado._id,
+  //       uid,
+  //       rol: "Estudiante",
+  //       online: false,
+  //     });
+  //     const matriculaCreada = await nuevaMatricula.save();
+
+  //     return res.json({
+  //       ok: true,
+  //       msg: "Matricula creada",
+  //       matricula: matriculaCreada,
+  //     });
+  //   }
+  // } catch (error) {
+  //   console.log(error);
+  //   return res.status(500).json({
+  //     ok: false,
+  //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
+  //   });
+  // }
 };
 
 // ADMINISTRADOR

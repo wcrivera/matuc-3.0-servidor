@@ -17,104 +17,63 @@ const jwt_1 = require("../helpers/jwt");
 const usuario_1 = __importDefault(require("../models/usuario"));
 const matricula_1 = __importDefault(require("../models/matricula"));
 const grupo_1 = __importDefault(require("../models/grupo"));
-const config_1 = __importDefault(require("../config"));
 // CLIENTE
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const generator = require('generate-password');
-    const nodemailer = require("nodemailer");
+    // const generator = require("generate-password");
+    // const nodemailer = require("nodemailer");
     const bcrypt = require("bcryptjs");
-    const { user, password } = req.body;
-    if (!user.endsWith("@uc.cl") && !user.endsWith("@estudiante.uc.cl")) {
-        return res.status(400).json({
-            ok: false,
-            msg: `${user} no es mail UC`,
-        });
-    }
-    try {
-        const email = user;
-        const usuarioEncontrado = yield usuario_1.default.findOne({ email });
-        console.log(usuarioEncontrado);
-        if (!usuarioEncontrado) {
-            const contrasena = generator.generate({
-                length: 10,
-                numbers: true
-            });
-            const transporter = nodemailer.createTransport({
-                host: "mail.manthano.cl",
-                port: 587,
-                secure: false,
-                auth: {
-                    user: config_1.default.SECRET_JWT_SEED_USER_MAIL,
-                    pass: config_1.default.SECRET_JWT_SEED_PASS_MAIL,
-                },
-            });
-            yield transporter.sendMail({
-                from: '"Manthano" <noreply@manthano.cl>',
-                to: email,
-                subject: "Crear usuario",
-                text: `Ingresa con tu mail UC y la contraseña ${contrasena}`,
-                html: `<p>Ingresa con tu mail UC y la contraseña</p> <p>${contrasena}</p> <p>Luego completa el formulario con tu nombre y apellido</p>`, // html body
-            });
-            const nuevoUsuario = new usuario_1.default({
-                nombre: "Nombre",
-                apellido: "Apellido",
-                email: email,
-                activo: false,
-                password: contrasena
-            });
-            yield nuevoUsuario.save();
-            return res.status(400).json({
-                ok: false,
-                usuario: { uid: nuevoUsuario._id, activo: false, email: email },
-                msg: `Te hemos enviado una contraseña provisoria ha tu mail: ${email} `,
-            });
-        }
-        if (password === usuarioEncontrado.password || usuarioEncontrado.password === undefined) {
-            console.log('password repetido o indefinido', usuarioEncontrado);
-            return res.json({
-                ok: true,
-                usuario: { uid: usuarioEncontrado._id, activo: false, email: usuarioEncontrado.email },
-                msg: 'update',
-            });
-        }
-        const validPassword = bcrypt.compareSync(password, usuarioEncontrado.password);
-        if (!validPassword) {
-            return res.status(400).json({
-                ok: false,
-                msg: "Contraseña incorrecta",
-            });
-        }
-        const token = yield (0, jwt_1.generarJWT)(usuarioEncontrado.id);
-        return res.json({
-            ok: true,
-            usuario: {
-                nombre: usuarioEncontrado.nombre,
-                apellido: usuarioEncontrado.apellido,
-                email: usuarioEncontrado.email,
-                admin: usuarioEncontrado.admin,
-                activo: usuarioEncontrado.activo
-            },
-            token,
-        });
-    }
-    catch (error) {
-    }
+    const { user, nombre, apellido, password } = req.body;
+    // if (!user.endsWith("@uc.cl") && !user.endsWith("@estudiante.uc.cl")) {
+    //   return res.status(400).json({
+    //     ok: false,
+    //     msg: `${user} no es mail UC`,
+    //   });
+    // }
     // try {
     //   const email = user;
     //   const usuarioEncontrado = await Usuario.findOne({ email });
     //   console.log(usuarioEncontrado)
     //   if (!usuarioEncontrado) {
-    //     // const usuario = new Usuario({
-    //     //   nombre: user,
-    //     //   apellido: user,
-    //     //   email: email,
-    //     // });
-    //     // const salt = bcrypt.genSaltSync();
-    //     // usuario.password = bcrypt.hashSync(password, salt);
-    //     // await usuario.save();
+    //     const contrasena = generator.generate({
+    //       length: 10,
+    //       numbers: true
+    //     });
+    //     const transporter = nodemailer.createTransport({
+    //       host: "mail.manthano.cl",
+    //       port: 587,
+    //       secure: false, // Use `true` for port 465, `false` for all other ports
+    //       auth: {
+    //         user: config.SECRET_JWT_SEED_USER_MAIL,
+    //         pass: config.SECRET_JWT_SEED_PASS_MAIL,
+    //       },
+    //     });
+    //     await transporter.sendMail({
+    //       from: '"Manthano" <noreply@manthano.cl>', // sender address
+    //       to: email, // list of receivers
+    //       subject: "Crear usuario", // Subject line
+    //       text: `Ingresa con tu mail UC y la contraseña ${contrasena}`, // plain text body
+    //       html: `<p>Ingresa con tu mail UC y la contraseña</p> <p>${contrasena}</p> <p>Luego completa el formulario con tu nombre y apellido</p>`, // html body
+    //     });
+    //     const nuevoUsuario = new Usuario({
+    //       nombre: "Nombre",
+    //       apellido: "Apellido",
+    //       email: email,
+    //       activo: false,
+    //       password: contrasena
+    //     });
+    //     await nuevoUsuario.save();
     //     return res.status(400).json({
     //       ok: false,
-    //       msg: "Usuario no encontrado",
+    //       usuario: { uid: nuevoUsuario._id, activo: false, email: email },
+    //       msg: `Te hemos enviado una contraseña provisoria ha tu mail: ${email} `,
+    //     });
+    //   }
+    //   if (password === usuarioEncontrado.password || usuarioEncontrado.password === undefined) {
+    //     console.log('password repetido o indefinido', usuarioEncontrado)
+    //     return res.json({
+    //       ok: true,
+    //       usuario: { uid: usuarioEncontrado._id, activo: false, email: usuarioEncontrado.email },
+    //       msg: 'update',
     //     });
     //   }
     //   const validPassword = bcrypt.compareSync(
@@ -135,16 +94,68 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //       apellido: usuarioEncontrado.apellido,
     //       email: usuarioEncontrado.email,
     //       admin: usuarioEncontrado.admin,
+    //       activo: usuarioEncontrado.activo
     //     },
     //     token,
     //   });
     // } catch (error) {
-    //   console.log(error);
-    //   return res.status(500).json({
-    //     ok: false,
-    //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
-    //   });
     // }
+    try {
+        const email = user;
+        const usuarioEncontrado = yield usuario_1.default.findOne({ email });
+        console.log("usuario encontrado", usuarioEncontrado);
+        if (!usuarioEncontrado) {
+            const usuario = new usuario_1.default({
+                nombre: nombre,
+                apellido: apellido,
+                email: email,
+            });
+            const salt = bcrypt.genSaltSync();
+            usuario.password = bcrypt.hashSync(password, salt);
+            const nuevoUsuario = yield usuario.save();
+            const token = yield (0, jwt_1.generarJWT)(nuevoUsuario.id);
+            return res.json({
+                ok: true,
+                usuario: {
+                    nombre: usuario.nombre,
+                    apellido: usuario.apellido,
+                    email: usuario.email,
+                    admin: false,
+                },
+                token,
+            });
+            // return res.status(400).json({
+            //   ok: false,
+            //   msg: "Usuario no encontrado",
+            // });
+        }
+        const validPassword = bcrypt.compareSync(password, usuarioEncontrado.password);
+        console.log(validPassword);
+        if (!validPassword) {
+            return res.status(400).json({
+                ok: false,
+                msg: "Contraseña incorrecta",
+            });
+        }
+        const token = yield (0, jwt_1.generarJWT)(usuarioEncontrado.id);
+        return res.json({
+            ok: true,
+            usuario: {
+                nombre: usuarioEncontrado.nombre,
+                apellido: usuarioEncontrado.apellido,
+                email: usuarioEncontrado.email,
+                admin: usuarioEncontrado.admin,
+            },
+            token,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
+        });
+    }
 });
 exports.login = login;
 const renewToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -260,7 +271,7 @@ const obtenerUsuariosCurso = (req, res) => __awaiter(void 0, void 0, void 0, fun
             ok: true,
             usuarios: usuarios,
             matriculas: matriculas,
-            grupos
+            grupos,
         });
     }
     catch (error) {
@@ -351,7 +362,7 @@ const crearUsuarioPassword = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 ok: true,
                 msg: "Usuario creado",
                 usuarioCreado,
-                grupo: grupoCreado
+                grupo: grupoCreado,
             });
         }
     }
@@ -386,7 +397,7 @@ const crearUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.json({
                 ok: true,
                 msg: "Existe",
-                usuarioCreado: usuarioEncontrado
+                usuarioCreado: usuarioEncontrado,
             });
         }
         else {
@@ -395,7 +406,7 @@ const crearUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.json({
                 ok: true,
                 msg: "Creado",
-                usuarioCreado: usuarioCreado
+                usuarioCreado: usuarioCreado,
             });
         }
     }
@@ -423,7 +434,7 @@ const editarUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             apellido: apellido,
             email: email,
             password: password,
-            activo: true
+            activo: true,
         };
         const bcrypt = require("bcryptjs");
         const salt = bcrypt.genSaltSync();
@@ -436,7 +447,7 @@ const editarUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             ok: true,
             msg: "Usuario editada",
             usuario: usuarioEditado,
-            token
+            token,
         });
     }
     catch (error) {

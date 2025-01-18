@@ -32,6 +32,7 @@ const router = (0, express_1.Router)();
 // Cliente
 router.get("/obtener/:mid", validar_jwt_1.validarJWT, questionCtrl.obtenerQuestionsModulo);
 router.get("/obtener/seccion/:qid", validar_jwt_1.validarJWT, questionCtrl.obtenerQuestionSeccion);
+router.get("/obtener/questions/seccion/:sid", validar_jwt_1.validarJWT, questionCtrl.obtenerQuestionsSeccion);
 // Admin
 router.get("/admin/obtener/:mid", validar_jwt_1.validarAdminJWT, questionCtrl.obtenerQuestionsModulo);
 router.post("/admin/crear", [

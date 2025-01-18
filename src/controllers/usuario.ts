@@ -9,6 +9,36 @@ import config from "../config";
 
 // CLIENTE
 
+export const loginGoogle: RequestHandler = async (req, res) => {
+  const { email, name, lastname } = req.body;
+
+  try {
+    const usuario = await Usuario.findOne({ email });
+
+    if (!usuario) {
+      console.log("No hay usuario");
+      return res.json({
+        ok: false,
+        msg: "El usuario no está registrado",
+      });
+    }
+
+    const token = await generarJWT(usuario.id);
+
+    return res.json({
+      ok: true,
+      usuario: usuario,
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 export const login: RequestHandler = async (req, res) => {
   // const generator = require("generate-password");
   // const nodemailer = require("nodemailer");

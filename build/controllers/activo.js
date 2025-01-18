@@ -39,7 +39,7 @@ const obtenerActivoSeccion = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const { sid } = req.params;
     try {
         const activo = yield activo_1.default.findOne({ sid: sid });
-        console.log(activo);
+        // console.log(activo)
         if (!activo) {
             return res.status(404).json({
                 ok: false,
@@ -78,7 +78,7 @@ const crearActivo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             //   ok: false,
             //   msg: "Ya existe este dato",
             // });
-            console.log(activoquestion);
+            // console.log(activoquestion)
             return res.json({
                 ok: false,
                 msg: "Ya existe este dato",

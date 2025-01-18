@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.crearDBQ = exports.ActivoSeccion = exports.obtenerUsuariosConectados = exports.desconectarUsuario = exports.conectarUsuario = void 0;
+exports.crearDBQ = exports.ActivoEjercicio = exports.ActivoSeccion = exports.obtenerUsuariosConectados = exports.desconectarUsuario = exports.conectarUsuario = void 0;
 const matricula_1 = __importDefault(require("../models/matricula"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const activo_1 = __importDefault(require("../models/activo"));
 const dbq_1 = __importDefault(require("../models/dbq"));
+const ejercicio_1 = __importDefault(require("../models/ejercicio"));
 const conectarUsuario = (mid) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const matriculaUpdate = yield matricula_1.default.findByIdAndUpdate(mid, { online: true }, { new: true });
@@ -100,6 +101,23 @@ const ActivoSeccion = (activo) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.ActivoSeccion = ActivoSeccion;
+const ActivoEjercicio = (ejercicio) => __awaiter(void 0, void 0, void 0, function* () {
+    const { eid, activo } = ejercicio;
+    try {
+        const ejercicioEncontrado = yield ejercicio_1.default.findById(eid);
+        if (ejercicioEncontrado) {
+            ejercicioEncontrado.activo = activo;
+            const ejercicioEditado = yield ejercicio_1.default.findByIdAndUpdate(ejercicioEncontrado._id, ejercicioEncontrado, { new: true });
+            return { ok: true, payload: ejercicioEditado };
+        }
+        return { ok: false, payload: ejercicio };
+    }
+    catch (error) {
+        console.log(error);
+        return { ok: false, payload: ejercicio };
+    }
+});
+exports.ActivoEjercicio = ActivoEjercicio;
 const crearDBQ = (activo) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const nuevoDBQ = new dbq_1.default({

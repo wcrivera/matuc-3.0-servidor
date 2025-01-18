@@ -67,6 +67,16 @@ class Sockets {
                 const payloadActivo = yield (0, socket_1.crearDBQ)(Object.assign(Object.assign({}, activo), { uid: uid }));
                 return this.io.to(uid).emit("dbq-cliente", payloadActivo.payload);
             }));
+            // TODO: Actualizar activo ejercicio
+            socket.on("activo-ejercicio", (ejercicio) => __awaiter(this, void 0, void 0, function* () {
+                if (matricula.rol === "Profesor") {
+                    const payloadActivo = yield (0, socket_1.ActivoEjercicio)(ejercicio);
+                    return this.io
+                        .to(sala)
+                        .emit("activo-ejercicio", payloadActivo.payload);
+                }
+                this.io.to(sala).emit("activo-ejercicio", ejercicio);
+            }));
         }));
     }
 }

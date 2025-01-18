@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editarMatricula = exports.crearMatricula = exports.obtenerMatriculasCurso = exports.crearMatriculaCurso = exports.obtenerMatricula = exports.obtenerMatriculas = void 0;
 const matricula_1 = __importDefault(require("../models/matricula"));
-const grupo_1 = __importDefault(require("../models/grupo"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const obtenerMatriculas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params;
@@ -42,9 +41,9 @@ const obtenerMatriculas = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.obtenerMatriculas = obtenerMatriculas;
 const obtenerMatricula = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { uid, cid } = req.params;
+    const { uid, gid } = req.params;
     try {
-        const matricula = yield matricula_1.default.findOne({ uid: uid, cid: cid });
+        const matricula = yield matricula_1.default.findOne({ uid: uid, gid: gid });
         if (!matricula) {
             return res.json({
                 ok: false,
@@ -69,8 +68,8 @@ exports.obtenerMatricula = obtenerMatricula;
 const crearMatriculaCurso = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { uid } = req.params;
-        const { cid } = req.body;
-        const matricula = yield matricula_1.default.findOne({ cid: cid, uid: uid });
+        const { cid, gid } = req.body;
+        const matricula = yield matricula_1.default.findOne({ gid: gid, uid: uid });
         if (matricula) {
             return res.json({
                 ok: true,
@@ -78,39 +77,19 @@ const crearMatriculaCurso = (req, res) => __awaiter(void 0, void 0, void 0, func
                 matricula,
             });
         }
-        const grupo = yield grupo_1.default.findOne({ cid: cid });
-        if (grupo) {
-            const nuevaMatricula = new matricula_1.default({
-                cid,
-                gid: grupo._id,
-                uid: uid,
-                rol: "Estudiante",
-                online: false,
-            });
-            const matriculaCreada = yield nuevaMatricula.save();
-            return res.json({
-                ok: true,
-                msg: "Matricula creada",
-                matricula: matriculaCreada,
-            });
-        }
-        else {
-            const nuevoGrupo = new grupo_1.default({ cid: cid, grupo: 100 });
-            const grupoCreado = yield nuevoGrupo.save();
-            const nuevaMatricula = new matricula_1.default({
-                cid,
-                gid: grupoCreado._id,
-                uid,
-                rol: "Estudiante",
-                online: false,
-            });
-            const matriculaCreada = yield nuevaMatricula.save();
-            return res.json({
-                ok: true,
-                msg: "Matricula creada",
-                matricula: matriculaCreada,
-            });
-        }
+        const nuevaMatricula = new matricula_1.default({
+            cid: cid,
+            gid: gid,
+            uid: uid,
+            rol: "Estudiante",
+            online: false,
+        });
+        const matriculaCreada = yield nuevaMatricula.save();
+        return res.json({
+            ok: true,
+            msg: "Matricula creada",
+            matricula: matriculaCreada,
+        });
     }
     catch (error) {
         console.log(error);
@@ -119,6 +98,56 @@ const crearMatriculaCurso = (req, res) => __awaiter(void 0, void 0, void 0, func
             msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
         });
     }
+    // try {
+    //   const { uid } = req.params;
+    //   const { cid } = req.body;
+    //   const matricula = await Matricula.findOne({ cid: cid, uid: uid });
+    //   if (matricula) {
+    //     return res.json({
+    //       ok: true,
+    //       msg: "Estudiante matriculado",
+    //       matricula,
+    //     });
+    //   }
+    //   const grupo = await Grupo.findOne({ cid: cid });
+    //   if (grupo) {
+    //     const nuevaMatricula = new Matricula({
+    //       cid,
+    //       gid: grupo._id,
+    //       uid: uid,
+    //       rol: "Estudiante",
+    //       online: false,
+    //     });
+    //     const matriculaCreada = await nuevaMatricula.save();
+    //     return res.json({
+    //       ok: true,
+    //       msg: "Matricula creada",
+    //       matricula: matriculaCreada,
+    //     });
+    //   } else {
+    //     const nuevoGrupo = new Grupo({ cid: cid, grupo: 100 });
+    //     const grupoCreado = await nuevoGrupo.save();
+    //     const nuevaMatricula = new Matricula({
+    //       cid,
+    //       gid: grupoCreado._id,
+    //       uid,
+    //       rol: "Estudiante",
+    //       online: false,
+    //     });
+    //     const matriculaCreada = await nuevaMatricula.save();
+    //     return res.json({
+    //       ok: true,
+    //       msg: "Matricula creada",
+    //       matricula: matriculaCreada,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   return res.status(500).json({
+    //     ok: false,
+    //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
+    //   });
+    // }
 });
 exports.crearMatriculaCurso = crearMatriculaCurso;
 // ADMINISTRADOR
