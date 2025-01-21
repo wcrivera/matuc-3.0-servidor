@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import * as usuarioCtrl from "../controllers/usuario";
-import { validarAdminJWT, validarJWT } from "../middlewares/validar-jwt";
+import { validarAdminJWT, validarJWT, validarPJWT } from "../middlewares/validar-jwt";
 import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos";
 import { validarGoogleToken } from "../middlewares/validar-google-token";
@@ -12,6 +12,7 @@ router.post("/outlook", usuarioCtrl.loginOutlook);
 router.post("/login", usuarioCtrl.login);
 router.post('/google', validarGoogleToken, usuarioCtrl.loginGoogle);
 router.get("/renew", validarJWT, usuarioCtrl.renewToken);
+router.post('/pimu', validarPJWT, usuarioCtrl.loginPIMU);
 
 router.put("/editar/:uid", usuarioCtrl.editarUsuario);
 

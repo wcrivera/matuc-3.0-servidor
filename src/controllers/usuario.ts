@@ -39,6 +39,164 @@ export const loginGoogle: RequestHandler = async (req, res) => {
   }
 };
 
+export const loginPIMU: RequestHandler = async (req, res) => {
+  // const generarPJWT = (uid : string) =>  {
+
+  //     return new Promise(( resolve, reject ) => {
+
+  //         const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'MAT000A', grupo: 1 };
+
+  //         // const payload = {"nombre":"Usuario 7","apellido":"Apellido 7","email":"usuario7@uc.cl","curso":"MAT000C","grupo":3}
+
+  //         jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
+  //             expiresIn: '60d'
+  //         }, ( err, token) => {
+  //             if (err) {
+  //                 console.log(err);
+  //                 reject('No se pudo generar el JWT')
+  //             } else {
+  //                 resolve(token);
+  //             }
+  //         });
+
+  //     });
+  // }
+
+  // const newtoken = await generarPJWT( 'uid' );
+
+  // console.log(newtoken)
+
+  const { nombre, apellido, email, curso, grupo } = req.params;
+
+  // console.log(curso)
+
+  try {
+    const usuario = await Usuario.findOne({ email });
+
+    if (!usuario) {
+      // Crear usuario
+      const nuevoUsuario = new Usuario({
+        nombre: nombre,
+        apellido: apellido,
+        email: email,
+      });
+      const nuevoUsuarioCreado = await nuevoUsuario.save();
+      const token = await generarJWT(nuevoUsuarioCreado.id);
+
+      // crear matricula
+      const { ObjectId } = require("mongodb");
+
+      let cid = "";
+
+      // PIMU PC: MAT000A
+      if (curso === "MAT001A") {
+        console.log("PIMU PC");
+        cid = ObjectId("6362d502e2cc0289406e780b");
+      }
+
+      // PIMU IM 2: MAT000B
+      if (curso === "MAT000B") {
+        console.log("PIMU IM 2");
+        cid = ObjectId("6363b97de2cc0289406e7826");
+      }
+
+      // PIMU IM 1: MAT000C
+      if (curso === "MAT000C") {
+        console.log("PIMU IM 1");
+        cid = ObjectId("63628a8de2cc0289406e77f2");
+      }
+
+      // PIMU RC: MAT000D
+      if (curso === "MAT000D") {
+        console.log("PIMU RC");
+        cid = ObjectId("639537c20b0e19067321271a");
+      }
+
+      // PIMU MC: MAT000D
+      if (curso === "MAT004A") {
+        console.log("PIMU CM");
+        cid = ObjectId("6786a538e55fa851d85729cb");
+      }
+
+      // TALLER VERANO PIMU PC: TVER000A
+      if (curso === "MAT002A") {
+        console.log("Taller PC");
+        cid = ObjectId("6789a51f54212e2d94db8d94");
+      }
+
+      // TALLER VERANO PIMU IM: TVER000B
+      if (curso === "MAT003A") {
+        console.log("Taller IM");
+        cid = ObjectId("63aee50ede82d8dbdcc77ff4");
+      }
+
+      if (cid === "") {
+        return res.json({
+          ok: false,
+          msg: "No se pudo matricular al estudiante",
+        });
+      }
+
+      const grupoEncontrado = await Grupo.findOne({
+        cid: cid,
+        grupo: grupo,
+      });
+
+      if (!grupoEncontrado) {
+        const nuevoGrupo = new Grupo({
+          cid: cid,
+          grupo: grupo,
+        });
+        const grupoCreado = await nuevoGrupo.save();
+
+        const nuevaMatricula = new Matricula({
+          cid: cid,
+          gid: grupoCreado._id,
+          uid: nuevoUsuarioCreado._id,
+          rol: "Estudiante",
+          online: false,
+        });
+        await nuevaMatricula.save();
+        return res.json({
+          ok: true,
+          usuario: nuevoUsuarioCreado,
+          token,
+        });
+      }
+
+      const nuevaMatricula = new Matricula({
+        cid: cid,
+        gid: grupoEncontrado._id,
+        uid: nuevoUsuarioCreado._id,
+        rol: "Estudiante",
+        online: false,
+      });
+      await nuevaMatricula.save();
+      return res.json({
+        ok: true,
+        usuario: nuevoUsuarioCreado,
+        token,
+      });
+    } else {
+      const token = await generarJWT(usuario.id);
+
+      return res.json({
+        ok: true,
+        usuario: usuario,
+        token,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    // const date = new Date();
+    // crearLog("", "LoginPIMU", JSON.stringify(date), JSON.stringify(error));
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 export const login: RequestHandler = async (req, res) => {
   // const generator = require("generate-password");
   // const nodemailer = require("nodemailer");
