@@ -38,7 +38,7 @@ export const obtenerCursos: RequestHandler = async (req, res) => {
       // { publico: true, activo: true }
     ).sort("sigla");
 
-    console.log(cursos);
+    // console.log(cursos);
 
     return res.json({
       ok: true,

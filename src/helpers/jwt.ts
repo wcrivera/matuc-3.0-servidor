@@ -25,7 +25,7 @@ export const generarPJWT = (nombre : string, apellido: string, email: string, cu
     
     return new Promise(( resolve, reject ) => {
         
-        const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'PIMUA', grupo: 1 };
+        const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wolfgang.rivera@gmail.com', curso: 'MAT001A', grupo: 1 };
 
         jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
             expiresIn: '60d'

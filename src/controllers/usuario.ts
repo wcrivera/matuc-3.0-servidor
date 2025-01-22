@@ -1,11 +1,9 @@
 import { RequestHandler } from "express";
-import { generarJWT, generarJWTAdmin, generarPJWT } from '../helpers/jwt';
+import { generarJWT, generarJWTAdmin, generarPJWT } from "../helpers/jwt";
 
 import Usuario from "../models/usuario";
 import Matricula from "../models/matricula";
 import Grupo from "../models/grupo";
-
-import config from "../config";
 
 // CLIENTE
 
@@ -62,8 +60,6 @@ export const loginPIMU: RequestHandler = async (req, res) => {
   //     });
   // }
 
-  
-
   // console.log(newtoken)
 
   const { nombre, apellido, email, curso, grupo } = req.params;
@@ -73,6 +69,60 @@ export const loginPIMU: RequestHandler = async (req, res) => {
   // console.log(newtoken)
 
   try {
+    // crear matricula
+    const { ObjectId } = require("mongodb");
+
+    let cid = "";
+
+    // PIMU PC: MAT000A
+    if (curso === "MAT001A") {
+      console.log("PIMU PC");
+      cid = new ObjectId("6362d502e2cc0289406e780b");
+    }
+
+    // PIMU IM 2: MAT000B
+    if (curso === "MAT000B") {
+      console.log("PIMU IM 2");
+      cid = new ObjectId("6363b97de2cc0289406e7826");
+    }
+
+    // PIMU IM 1: MAT000C
+    if (curso === "MAT000C") {
+      console.log("PIMU IM 1");
+      cid = new ObjectId("63628a8de2cc0289406e77f2");
+    }
+
+    // PIMU RC: MAT000D
+    if (curso === "MAT000D") {
+      console.log("PIMU RC");
+      cid = new ObjectId("639537c20b0e19067321271a");
+    }
+
+    // PIMU MC: MAT000D
+    if (curso === "MAT004A") {
+      console.log("PIMU CM");
+      cid = new ObjectId("6786a538e55fa851d85729cb");
+    }
+
+    // TALLER VERANO PIMU PC: TVER000A
+    if (curso === "MAT002A") {
+      console.log("Taller PC");
+      cid = new ObjectId("63aee57bde82d8dbdcc77ff5");
+    }
+
+    // TALLER VERANO PIMU IM: TVER000B
+    if (curso === "MAT003A") {
+      console.log("Taller IM");
+      cid = new ObjectId("63aee50ede82d8dbdcc77ff4");
+    }
+
+    if (cid === "") {
+      return res.json({
+        ok: false,
+        msg: "No se pudo matricular al estudiante",
+      });
+    }
+
     const usuario = await Usuario.findOne({ email });
 
     if (!usuario) {
@@ -84,60 +134,6 @@ export const loginPIMU: RequestHandler = async (req, res) => {
       });
       const nuevoUsuarioCreado = await nuevoUsuario.save();
       const token = await generarJWT(nuevoUsuarioCreado.id);
-
-      // crear matricula
-      const { ObjectId } = require("mongodb");
-
-      let cid = "";
-
-      // PIMU PC: MAT000A
-      if (curso === "MAT001A") {
-        console.log("PIMU PC");
-        cid = ObjectId("6362d502e2cc0289406e780b");
-      }
-
-      // PIMU IM 2: MAT000B
-      if (curso === "MAT000B") {
-        console.log("PIMU IM 2");
-        cid = ObjectId("6363b97de2cc0289406e7826");
-      }
-
-      // PIMU IM 1: MAT000C
-      if (curso === "MAT000C") {
-        console.log("PIMU IM 1");
-        cid = ObjectId("63628a8de2cc0289406e77f2");
-      }
-
-      // PIMU RC: MAT000D
-      if (curso === "MAT000D") {
-        console.log("PIMU RC");
-        cid = ObjectId("639537c20b0e19067321271a");
-      }
-
-      // PIMU MC: MAT000D
-      if (curso === "MAT004A") {
-        console.log("PIMU CM");
-        cid = ObjectId("6786a538e55fa851d85729cb");
-      }
-
-      // TALLER VERANO PIMU PC: TVER000A
-      if (curso === "MAT002A") {
-        console.log("Taller PC");
-        cid = ObjectId("63aee57bde82d8dbdcc77ff5");
-      }
-
-      // TALLER VERANO PIMU IM: TVER000B
-      if (curso === "MAT003A") {
-        console.log("Taller IM");
-        cid = ObjectId("63aee50ede82d8dbdcc77ff4");
-      }
-
-      if (cid === "") {
-        return res.json({
-          ok: false,
-          msg: "No se pudo matricular al estudiante",
-        });
-      }
 
       const grupoEncontrado = await Grupo.findOne({
         cid: cid,
@@ -181,6 +177,55 @@ export const loginPIMU: RequestHandler = async (req, res) => {
       });
     } else {
       const token = await generarJWT(usuario.id);
+
+      const grupoEncontrado = await Grupo.findOne({
+        cid: cid,
+        grupo: grupo,
+      });
+
+      if (!grupoEncontrado) {
+        const nuevoGrupo = new Grupo({
+          cid: cid,
+          grupo: grupo,
+        });
+        const grupoCreado = await nuevoGrupo.save();
+
+        const nuevaMatricula = new Matricula({
+          cid: cid,
+          gid: grupoCreado._id,
+          uid: usuario._id,
+          rol: "Estudiante",
+          online: false,
+        });
+        await nuevaMatricula.save();
+        return res.json({
+          ok: true,
+          usuario: usuario,
+          token,
+        });
+      }
+
+      const matriculaEncontrada = await Matricula.findOne({
+        cid: cid,
+        gid: grupoEncontrado._id,
+        uid: usuario._id,
+      });
+
+      if (!matriculaEncontrada) {
+        const nuevaMatricula = new Matricula({
+          cid: cid,
+          gid: grupoEncontrado._id,
+          uid: usuario._id,
+          rol: "Estudiante",
+          online: false,
+        });
+        await nuevaMatricula.save();
+        return res.json({
+          ok: true,
+          usuario: usuario,
+          token,
+        });
+      }
 
       return res.json({
         ok: true,
@@ -304,7 +349,7 @@ export const login: RequestHandler = async (req, res) => {
     const email = user;
     const usuarioEncontrado = await Usuario.findOne({ email });
 
-    console.log("usuario encontrado", usuarioEncontrado);
+    // console.log("usuario encontrado", usuarioEncontrado);
 
     if (!usuarioEncontrado) {
       const usuario = new Usuario({
@@ -340,7 +385,7 @@ export const login: RequestHandler = async (req, res) => {
       usuarioEncontrado.password
     );
 
-    console.log(validPassword);
+    // console.log(validPassword);
 
     if (!validPassword) {
       return res.status(400).json({
