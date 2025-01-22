@@ -21,25 +21,25 @@ export const generarJWT = (uid : string) =>  {
     });
 }
 
-// export const generarPJWT = (uid : string) =>  {
+export const generarPJWT = (nombre : string, apellido: string, email: string, curso: string, grupo: string) =>  {
     
-//     return new Promise(( resolve, reject ) => {
+    return new Promise(( resolve, reject ) => {
         
-//         const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'PIMUA', grupo: 1 };
+        const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'PIMUA', grupo: 1 };
 
-//         jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
-//             expiresIn: '60d'
-//         }, ( err, token) => {
-//             if (err) {
-//                 console.log(err);
-//                 reject('No se pudo generar el JWT')
-//             } else {
-//                 resolve(token);
-//             }
-//         });
+        jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
+            expiresIn: '60d'
+        }, ( err, token) => {
+            if (err) {
+                console.log(err);
+                reject('No se pudo generar el JWT')
+            } else {
+                resolve(token);
+            }
+        });
 
-//     });
-// }
+    });
+}
 
 export const generarJWTAdmin = (uid : string) =>  {
     

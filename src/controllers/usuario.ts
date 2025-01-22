@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { generarJWT, generarJWTAdmin } from "../helpers/jwt";
+import { generarJWT, generarJWTAdmin, generarPJWT } from '../helpers/jwt';
 
 import Usuario from "../models/usuario";
 import Matricula from "../models/matricula";
@@ -62,13 +62,15 @@ export const loginPIMU: RequestHandler = async (req, res) => {
   //     });
   // }
 
-  // const newtoken = await generarPJWT( 'uid' );
+  
 
   // console.log(newtoken)
 
   const { nombre, apellido, email, curso, grupo } = req.params;
 
-  // console.log(curso)
+  // const newtoken = await generarPJWT( nombre, apellido, email, curso, grupo );
+
+  // console.log(newtoken)
 
   try {
     const usuario = await Usuario.findOne({ email });
@@ -121,7 +123,7 @@ export const loginPIMU: RequestHandler = async (req, res) => {
       // TALLER VERANO PIMU PC: TVER000A
       if (curso === "MAT002A") {
         console.log("Taller PC");
-        cid = ObjectId("6789a51f54212e2d94db8d94");
+        cid = ObjectId("63aee57bde82d8dbdcc77ff5");
       }
 
       // TALLER VERANO PIMU IM: TVER000B
