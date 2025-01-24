@@ -34,20 +34,45 @@ export const obtenerModulosCurso: RequestHandler = async (req, res) => {
       });
     }
 
-    const modulos = await Modulo.find({ cid: cid, activo: true }).sort({ modulo: 1 });
-
-    const moduloNoticias = {
-      mid: "0",
+    const matricula = await Matricula.findOne({
       cid: cid,
-      modulo: 0,
-      nombre: "Noticias",
-    };
-
-    return res.json({
-      ok: true,
-      msg: "Módulos obtenidos",
-      modulos: [moduloNoticias, ...modulos],
+      uid: uid,
+      rol: "Profesor",
     });
+
+    if (!matricula) {
+      const modulos = await Modulo.find({ cid: cid, activo: true }).sort({
+        modulo: 1,
+      });
+
+      const moduloNoticias = {
+        mid: "0",
+        cid: cid,
+        modulo: 0,
+        nombre: "Noticias",
+      };
+
+      return res.json({
+        ok: true,
+        msg: "Módulos obtenidos",
+        modulos: [moduloNoticias, ...modulos],
+      });
+    } else {
+      const modulos = await Modulo.find({ cid: cid }).sort({ modulo: 1 });
+
+      const moduloNoticias = {
+        mid: "0",
+        cid: cid,
+        modulo: 0,
+        nombre: "Noticias",
+      };
+
+      return res.json({
+        ok: true,
+        msg: "Módulos obtenidos",
+        modulos: [moduloNoticias, ...modulos],
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({
