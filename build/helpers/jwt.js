@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.comprobarAdminJWT = exports.comprobarJWT = exports.generarJWTAdmin = exports.generarJWT = void 0;
+exports.comprobarAdminJWT = exports.comprobarJWT = exports.generarJWTAdmin = exports.generarPJWT = exports.generarJWT = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const generarJWT = (uid) => {
@@ -46,21 +46,23 @@ const generarJWT = (uid) => {
     });
 };
 exports.generarJWT = generarJWT;
-// export const generarPJWT = (uid : string) =>  {
-//     return new Promise(( resolve, reject ) => {
-//         const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'PIMUA', grupo: 1 };
-//         jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
-//             expiresIn: '60d'
-//         }, ( err, token) => {
-//             if (err) {
-//                 console.log(err);
-//                 reject('No se pudo generar el JWT')
-//             } else {
-//                 resolve(token);
-//             }
-//         });
-//     });
-// }
+const generarPJWT = (nombre, apellido, email, curso, grupo) => {
+    return new Promise((resolve, reject) => {
+        const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wolfgang.rivera@gmail.com', curso: 'MAT001A', grupo: 1 };
+        jwt.sign(payload, config_1.default.SECRET_JWT_SEED_PIMU, {
+            expiresIn: '60d'
+        }, (err, token) => {
+            if (err) {
+                console.log(err);
+                reject('No se pudo generar el JWT');
+            }
+            else {
+                resolve(token);
+            }
+        });
+    });
+};
+exports.generarPJWT = generarPJWT;
 const generarJWTAdmin = (uid) => {
     return new Promise((resolve, reject) => {
         const payload = { uid };

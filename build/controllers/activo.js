@@ -16,10 +16,29 @@ exports.editarActivo = exports.crearActivo = exports.obtenerActivoSeccion = expo
 const activo_1 = __importDefault(require("../models/activo"));
 // import Usuario from "../models/usuario";
 const matricula_1 = __importDefault(require("../models/matricula"));
+const modulo_1 = __importDefault(require("../models/modulo"));
 const obtenerActivosModulo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { mid } = req.params;
+    const { uid, mid } = req.params;
     try {
-        const activos = yield activo_1.default.find({ mid: mid });
+        const modulo = yield modulo_1.default.findOne({ _id: mid });
+        if (!modulo) {
+            return res.status(404).json({
+                ok: false,
+                msg: "modulo no encontrado",
+            });
+        }
+        const matricula = yield matricula_1.default.findOne({
+            cid: modulo.cid,
+            uid: uid,
+            online: true,
+        });
+        if (!matricula) {
+            return res.status(404).json({
+                ok: false,
+                msg: "matricula no encontrada",
+            });
+        }
+        const activos = yield activo_1.default.find({ gid: matricula.gid });
         return res.json({
             ok: true,
             activos,

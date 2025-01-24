@@ -12,12 +12,217 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eliminarUsuario = exports.editarUsuario = exports.crearUsuario = exports.crearUsuarioPassword = exports.obtenerUsuariosCurso = exports.loginOutlookAdmin = exports.loginOutlook = exports.renewToken = exports.login = void 0;
+exports.eliminarUsuario = exports.editarUsuario = exports.crearUsuario = exports.crearUsuarioPassword = exports.obtenerUsuariosCurso = exports.loginOutlookAdmin = exports.loginOutlook = exports.renewToken = exports.login = exports.loginPIMU = exports.loginGoogle = void 0;
 const jwt_1 = require("../helpers/jwt");
 const usuario_1 = __importDefault(require("../models/usuario"));
 const matricula_1 = __importDefault(require("../models/matricula"));
 const grupo_1 = __importDefault(require("../models/grupo"));
 // CLIENTE
+const loginGoogle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, name, lastname } = req.body;
+    try {
+        const usuario = yield usuario_1.default.findOne({ email });
+        if (!usuario) {
+            console.log("No hay usuario");
+            return res.json({
+                ok: false,
+                msg: "El usuario no está registrado",
+            });
+        }
+        const token = yield (0, jwt_1.generarJWT)(usuario.id);
+        return res.json({
+            ok: true,
+            usuario: usuario,
+            token,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Hable con el administrador",
+        });
+    }
+});
+exports.loginGoogle = loginGoogle;
+const loginPIMU = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // const generarPJWT = (uid : string) =>  {
+    //     return new Promise(( resolve, reject ) => {
+    //         const payload = { nombre: 'Claudio', apellido: 'Rivera', email: 'wcrivera@uc.cl', curso: 'MAT000A', grupo: 1 };
+    //         // const payload = {"nombre":"Usuario 7","apellido":"Apellido 7","email":"usuario7@uc.cl","curso":"MAT000C","grupo":3}
+    //         jwt.sign(payload, config.SECRET_JWT_SEED_PIMU, {
+    //             expiresIn: '60d'
+    //         }, ( err, token) => {
+    //             if (err) {
+    //                 console.log(err);
+    //                 reject('No se pudo generar el JWT')
+    //             } else {
+    //                 resolve(token);
+    //             }
+    //         });
+    //     });
+    // }
+    // console.log(newtoken)
+    const { nombre, apellido, email, curso, grupo } = req.params;
+    // const newtoken = await generarPJWT( nombre, apellido, email, curso, grupo );
+    // console.log(newtoken)
+    try {
+        // crear matricula
+        const { ObjectId } = require("mongodb");
+        let cid = "";
+        // PIMU PC: MAT000A si
+        if (curso === "MAT001A") {
+            console.log("PIMU PC");
+            cid = new ObjectId("6362d502e2cc0289406e780b");
+        }
+        // PIMU IM 2: MAT000B si
+        if (curso === "MAT000B") {
+            console.log("PIMU IM 2");
+            cid = new ObjectId("6363b97de2cc0289406e7826");
+        }
+        // PIMU IM 1: MAT000C si
+        if (curso === "MAT000C") {
+            console.log("PIMU IM 1");
+            cid = new ObjectId("63628a8de2cc0289406e77f2");
+        }
+        // PIMU RC: MAT000D si
+        if (curso === "MAT000D") {
+            console.log("PIMU RC");
+            cid = new ObjectId("639537c20b0e19067321271a");
+        }
+        // PIMU MC: MAT000D si
+        if (curso === "MAT004A") {
+            console.log("PIMU CM");
+            cid = new ObjectId("6786a538e55fa851d85729cb");
+        }
+        // TALLER VERANO PIMU PC: TVER000A si
+        if (curso === "MAT002A") {
+            console.log("Taller PC");
+            cid = new ObjectId("63aee57bde82d8dbdcc77ff5");
+        }
+        // TALLER VERANO PIMU IM: TVER000B si
+        if (curso === "MAT003A") {
+            console.log("Taller IM");
+            cid = new ObjectId("63aee50ede82d8dbdcc77ff4");
+        }
+        if (cid === "") {
+            return res.json({
+                ok: false,
+                msg: "No se pudo matricular al estudiante",
+            });
+        }
+        const usuario = yield usuario_1.default.findOne({ email });
+        if (!usuario) {
+            // Crear usuario
+            const nuevoUsuario = new usuario_1.default({
+                nombre: nombre,
+                apellido: apellido,
+                email: email,
+            });
+            const nuevoUsuarioCreado = yield nuevoUsuario.save();
+            const token = yield (0, jwt_1.generarJWT)(nuevoUsuarioCreado.id);
+            const grupoEncontrado = yield grupo_1.default.findOne({
+                cid: cid,
+                grupo: grupo,
+            });
+            if (!grupoEncontrado) {
+                const nuevoGrupo = new grupo_1.default({
+                    cid: cid,
+                    grupo: grupo,
+                });
+                const grupoCreado = yield nuevoGrupo.save();
+                const nuevaMatricula = new matricula_1.default({
+                    cid: cid,
+                    gid: grupoCreado._id,
+                    uid: nuevoUsuarioCreado._id,
+                    rol: "Estudiante",
+                    online: false,
+                });
+                yield nuevaMatricula.save();
+                return res.json({
+                    ok: true,
+                    usuario: nuevoUsuarioCreado,
+                    token,
+                });
+            }
+            const nuevaMatricula = new matricula_1.default({
+                cid: cid,
+                gid: grupoEncontrado._id,
+                uid: nuevoUsuarioCreado._id,
+                rol: "Estudiante",
+                online: false,
+            });
+            yield nuevaMatricula.save();
+            return res.json({
+                ok: true,
+                usuario: nuevoUsuarioCreado,
+                token,
+            });
+        }
+        else {
+            const token = yield (0, jwt_1.generarJWT)(usuario.id);
+            const grupoEncontrado = yield grupo_1.default.findOne({
+                cid: cid,
+                grupo: grupo,
+            });
+            if (!grupoEncontrado) {
+                const nuevoGrupo = new grupo_1.default({
+                    cid: cid,
+                    grupo: grupo,
+                });
+                const grupoCreado = yield nuevoGrupo.save();
+                const nuevaMatricula = new matricula_1.default({
+                    cid: cid,
+                    gid: grupoCreado._id,
+                    uid: usuario._id,
+                    rol: "Estudiante",
+                    online: false,
+                });
+                yield nuevaMatricula.save();
+                return res.json({
+                    ok: true,
+                    usuario: usuario,
+                    token,
+                });
+            }
+            const matriculaEncontrada = yield matricula_1.default.findOne({
+                cid: cid,
+                gid: grupoEncontrado._id,
+                uid: usuario._id,
+            });
+            if (!matriculaEncontrada) {
+                const nuevaMatricula = new matricula_1.default({
+                    cid: cid,
+                    gid: grupoEncontrado._id,
+                    uid: usuario._id,
+                    rol: "Estudiante",
+                    online: false,
+                });
+                yield nuevaMatricula.save();
+                return res.json({
+                    ok: true,
+                    usuario: usuario,
+                    token,
+                });
+            }
+            return res.json({
+                ok: true,
+                usuario: usuario,
+                token,
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        // const date = new Date();
+        // crearLog("", "LoginPIMU", JSON.stringify(date), JSON.stringify(error));
+        res.status(500).json({
+            ok: false,
+            msg: "Hable con el administrador",
+        });
+    }
+});
+exports.loginPIMU = loginPIMU;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // const generator = require("generate-password");
     // const nodemailer = require("nodemailer");
@@ -103,7 +308,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const email = user;
         const usuarioEncontrado = yield usuario_1.default.findOne({ email });
-        console.log("usuario encontrado", usuarioEncontrado);
+        // console.log("usuario encontrado", usuarioEncontrado);
         if (!usuarioEncontrado) {
             const usuario = new usuario_1.default({
                 nombre: nombre,
@@ -130,7 +335,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             // });
         }
         const validPassword = bcrypt.compareSync(password, usuarioEncontrado.password);
-        console.log(validPassword);
+        // console.log(validPassword);
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,

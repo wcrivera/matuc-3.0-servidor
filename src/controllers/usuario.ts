@@ -74,43 +74,43 @@ export const loginPIMU: RequestHandler = async (req, res) => {
 
     let cid = "";
 
-    // PIMU PC: MAT000A
+    // PIMU PC: MAT000A si
     if (curso === "MAT001A") {
       console.log("PIMU PC");
       cid = new ObjectId("6362d502e2cc0289406e780b");
     }
 
-    // PIMU IM 2: MAT000B
+    // PIMU IM 2: MAT000B si
     if (curso === "MAT000B") {
       console.log("PIMU IM 2");
       cid = new ObjectId("6363b97de2cc0289406e7826");
     }
 
-    // PIMU IM 1: MAT000C
+    // PIMU IM 1: MAT000C si
     if (curso === "MAT000C") {
       console.log("PIMU IM 1");
       cid = new ObjectId("63628a8de2cc0289406e77f2");
     }
 
-    // PIMU RC: MAT000D
+    // PIMU RC: MAT000D si
     if (curso === "MAT000D") {
       console.log("PIMU RC");
       cid = new ObjectId("639537c20b0e19067321271a");
     }
 
-    // PIMU MC: MAT000D
+    // PIMU MC: MAT000D si
     if (curso === "MAT004A") {
       console.log("PIMU CM");
       cid = new ObjectId("6786a538e55fa851d85729cb");
     }
 
-    // TALLER VERANO PIMU PC: TVER000A
+    // TALLER VERANO PIMU PC: TVER000A si
     if (curso === "MAT002A") {
       console.log("Taller PC");
       cid = new ObjectId("63aee57bde82d8dbdcc77ff5");
     }
 
-    // TALLER VERANO PIMU IM: TVER000B
+    // TALLER VERANO PIMU IM: TVER000B si
     if (curso === "MAT003A") {
       console.log("Taller IM");
       cid = new ObjectId("63aee50ede82d8dbdcc77ff4");

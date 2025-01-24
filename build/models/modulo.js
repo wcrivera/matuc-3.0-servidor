@@ -27,6 +27,10 @@ const ModuloSchema = new mongoose_1.Schema({
         required: true,
         trim: true,
     },
+    activo: {
+        type: Boolean,
+        default: true,
+    },
 });
 ModuloSchema.method("toJSON", function () {
     const _a = this.toObject(), { _id } = _a, object = __rest(_a, ["_id"]);

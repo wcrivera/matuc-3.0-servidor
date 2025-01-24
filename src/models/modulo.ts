@@ -5,6 +5,7 @@ interface Modulo {
   cid: Schema.Types.ObjectId;
   modulo: number;
   nombre: string;
+  activo: Boolean;
 }
 
 const ModuloSchema = new Schema<Modulo>({
@@ -21,6 +22,10 @@ const ModuloSchema = new Schema<Modulo>({
     type: String,
     required: true,
     trim: true,
+  },
+  activo: {
+    type: Boolean,
+    default: true,
   },
 });
 

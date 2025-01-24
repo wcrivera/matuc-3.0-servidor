@@ -17,9 +17,30 @@ const modulo_1 = __importDefault(require("../models/modulo"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const matricula_1 = __importDefault(require("../models/matricula"));
 const obtenerModulosCurso = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cid } = req.params;
+    const { cid, uid } = req.params;
     try {
-        const modulos = yield modulo_1.default.find({ cid: cid }).sort({ modulo: 1 });
+        const usuario = yield usuario_1.default.findById(uid);
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: "Usuario no registrado",
+            });
+        }
+        if (usuario.admin) {
+            const modulos = yield modulo_1.default.find({ cid: cid }).sort({ modulo: 1 });
+            const moduloNoticias = {
+                mid: "0",
+                cid: cid,
+                modulo: 0,
+                nombre: "Noticias",
+            };
+            return res.json({
+                ok: true,
+                msg: "Módulos obtenidos",
+                modulos: [moduloNoticias, ...modulos],
+            });
+        }
+        const modulos = yield modulo_1.default.find({ cid: cid, activo: true }).sort({ modulo: 1 });
         const moduloNoticias = {
             mid: "0",
             cid: cid,

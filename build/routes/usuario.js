@@ -28,11 +28,14 @@ const usuarioCtrl = __importStar(require("../controllers/usuario"));
 const validar_jwt_1 = require("../middlewares/validar-jwt");
 const express_validator_1 = require("express-validator");
 const validar_campos_1 = require("../middlewares/validar-campos");
+const validar_google_token_1 = require("../middlewares/validar-google-token");
 const router = (0, express_1.Router)();
 // CLIENTE
 router.post("/outlook", usuarioCtrl.loginOutlook);
 router.post("/login", usuarioCtrl.login);
+router.post('/google', validar_google_token_1.validarGoogleToken, usuarioCtrl.loginGoogle);
 router.get("/renew", validar_jwt_1.validarJWT, usuarioCtrl.renewToken);
+router.post('/pimu', validar_jwt_1.validarPJWT, usuarioCtrl.loginPIMU);
 router.put("/editar/:uid", usuarioCtrl.editarUsuario);
 // ADMINISTRADOR
 router.post("/admin/outlook", usuarioCtrl.loginOutlookAdmin);

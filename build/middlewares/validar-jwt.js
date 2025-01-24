@@ -31,11 +31,11 @@ const jwt = __importStar(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const validarJWT = (req, res, next) => {
     try {
-        const token = req.header('x-token');
+        const token = req.header("x-token");
         if (!token) {
             return res.status(401).json({
                 ok: false,
-                msg: 'No hay token en la petición'
+                msg: "No hay token en la petición",
             });
         }
         const payload = jwt.verify(token, config_1.default.SECRET_JWT_SEED_CLIENTE);
@@ -45,7 +45,7 @@ const validarJWT = (req, res, next) => {
     catch (e) {
         return res.status(401).json({
             ok: false,
-            msg: 'Token no es válido'
+            msg: "Token no es válido",
         });
     }
 };
@@ -56,7 +56,7 @@ const validarPJWT = (req, res, next) => {
         if (!token) {
             return res.status(401).json({
                 ok: false,
-                msg: 'No hay token en la petición'
+                msg: "No hay token en la petición",
             });
         }
         const payload = jwt.verify(token, config_1.default.SECRET_JWT_SEED_PIMU);
@@ -70,18 +70,18 @@ const validarPJWT = (req, res, next) => {
     catch (e) {
         return res.status(401).json({
             ok: false,
-            msg: 'Token no es válido'
+            msg: "Token no es válido",
         });
     }
 };
 exports.validarPJWT = validarPJWT;
 const validarAdminJWT = (req, res, next) => {
     try {
-        const token = req.header('x-token');
+        const token = req.header("x-token");
         if (!token) {
             return res.status(401).json({
                 ok: false,
-                msg: 'No hay token en la petición'
+                msg: "No hay token en la petición",
             });
         }
         const payload = jwt.verify(token, config_1.default.SECRET_JWT_SEED_ADMIN);
@@ -91,7 +91,7 @@ const validarAdminJWT = (req, res, next) => {
     catch (e) {
         return res.status(401).json({
             ok: false,
-            msg: 'Token no es válido'
+            msg: "Token no es válido",
         });
     }
 };

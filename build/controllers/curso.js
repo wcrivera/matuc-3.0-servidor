@@ -17,6 +17,7 @@ const usuario_1 = __importDefault(require("../models/usuario"));
 const curso_1 = __importDefault(require("../models/curso"));
 const grupo_1 = __importDefault(require("../models/grupo"));
 const matricula_1 = __importDefault(require("../models/matricula"));
+// import mongoose from "mongoose";
 const obtenerCursos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params;
     try {
@@ -35,12 +36,25 @@ const obtenerCursos = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 cursos,
             });
         }
-        const cursos = yield curso_1.default.find({ publico: true, activo: true }).sort("sigla");
+        const cursosUsuario = (yield matricula_1.default.find({ uid: uid })).map((item) => item.cid.toString());
+        const cursos = yield curso_1.default.find({ _id: { $in: cursosUsuario } }
+        // { publico: true, activo: true }
+        ).sort("sigla");
+        // console.log(cursos);
         return res.json({
             ok: true,
             msg: "Cursos obtenidos",
             cursos,
         });
+        // Todos los cursos publicos y activos
+        // const cursos = await Curso.find({ publico: true, activo: true }).sort(
+        //   "sigla"
+        // );
+        // return res.json({
+        //   ok: true,
+        //   msg: "Cursos obtenidos",
+        //   cursos,
+        // });
     }
     catch (error) {
         console.log(error);

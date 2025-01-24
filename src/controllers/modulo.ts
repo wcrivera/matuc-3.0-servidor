@@ -5,10 +5,36 @@ import Usuario from "../models/usuario";
 import Matricula from "../models/matricula";
 
 export const obtenerModulosCurso: RequestHandler = async (req, res) => {
-  const { cid } = req.params;
+  const { cid, uid } = req.params;
 
   try {
-    const modulos = await Modulo.find({ cid: cid }).sort({ modulo: 1 });
+    const usuario = await Usuario.findById(uid);
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Usuario no registrado",
+      });
+    }
+
+    if (usuario.admin) {
+      const modulos = await Modulo.find({ cid: cid }).sort({ modulo: 1 });
+
+      const moduloNoticias = {
+        mid: "0",
+        cid: cid,
+        modulo: 0,
+        nombre: "Noticias",
+      };
+
+      return res.json({
+        ok: true,
+        msg: "Módulos obtenidos",
+        modulos: [moduloNoticias, ...modulos],
+      });
+    }
+
+    const modulos = await Modulo.find({ cid: cid, activo: true }).sort({ modulo: 1 });
 
     const moduloNoticias = {
       mid: "0",
