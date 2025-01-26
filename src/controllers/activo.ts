@@ -32,6 +32,8 @@ export const obtenerActivosModulo: RequestHandler = async (req, res) => {
     }
     const activos = await Activo.find({ gid: matricula.gid });
 
+    console.log(activos)
+
     return res.json({
       ok: true,
       activos,

@@ -1,15 +1,12 @@
 import { Router } from "express";
-
-import { check } from "express-validator";
-import { validarAdminJWT, validarJWT } from "../middlewares/validar-jwt";
-import { validarCampos } from "../middlewares/validar-campos";
+import { validarJWT } from "../middlewares/validar-jwt";
 
 import * as estadisticaCtrl from "../controllers/estadistica";
 
 const router = Router();
 
 // Cliente
-router.get("/obtener/:gid/:sid", validarJWT, estadisticaCtrl.obtenerEstadistica);
+router.get("/obtener/:gid/:sid", validarJWT, estadisticaCtrl.obtenerDBQSeccion);
 
 // Admin
 
