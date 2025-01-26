@@ -87,7 +87,6 @@ export const crearMatriculaCurso: RequestHandler = async (req, res) => {
       msg: "Matricula creada",
       matricula: matriculaCreada,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -200,6 +199,8 @@ export const obtenerMatriculasCurso: RequestHandler = async (req, res) => {
 export const crearMatricula: RequestHandler = async (req, res) => {
   const { uid } = req.params;
 
+  console.log(uid)
+
   try {
     const usuario = await Usuario.findById(uid);
 
@@ -216,10 +217,11 @@ export const crearMatricula: RequestHandler = async (req, res) => {
         msg: "Usuario sin permiso",
       });
     }
-    const { cid, uid: uidUsuario } = req.body;
+    const { cid, uid: uidUsuario, gid: gidUsuario } = req.body;
 
     const matriculaEncontrada = await Matricula.findOne({
       cid: cid,
+      gid: gidUsuario,
       uid: uidUsuario,
     });
 

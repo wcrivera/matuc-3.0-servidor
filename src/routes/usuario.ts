@@ -20,10 +20,16 @@ router.put("/editar/:uid", usuarioCtrl.editarUsuario);
 // ADMINISTRADOR
 router.post("/admin/outlook", usuarioCtrl.loginOutlookAdmin);
 router.get(
-  "/admin/obtener/:cid",
+  "/admin/obtener/:gid",
   validarAdminJWT,
-  usuarioCtrl.obtenerUsuariosCurso
+  usuarioCtrl.obtenerUsuariosGrupo
 );
+router.get(
+  "/admin/obtener-no-matriculado/:gid",
+  validarAdminJWT,
+  usuarioCtrl.obtenerUsuariosNoMatriculados
+);
+
 router.post(
   "/admin/crear/password",
   [

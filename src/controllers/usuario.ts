@@ -539,7 +539,8 @@ export const obtenerUsuariosCurso: RequestHandler = async (req, res) => {
       nombre: 1,
     });
 
-    const grupos = await Grupo.find({ _id: { $in: ids } });
+    // const grupos = await Grupo.find({ _id: { $in: ids } });
+    const grupos = await Grupo.find({ cid: cid });
 
     return res.json({
       ok: true,
@@ -577,6 +578,109 @@ export const obtenerUsuariosCurso: RequestHandler = async (req, res) => {
   //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
   //   });
   // }
+};
+
+export const obtenerUsuariosGrupo: RequestHandler = async (req, res) => {
+  const { gid, uid } = req.params;
+
+  try {
+    const usuario = await Usuario.findById(uid);
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Usuario no encontrado",
+      });
+    }
+
+    const matriculas = await Matricula.find({ gid: gid });
+
+    const ids = matriculas.map((item) => item.uid);
+
+    const usuarios = await Usuario.find({ _id: { $in: ids } }).sort({
+      apellido: 1,
+      nombre: 1,
+    });
+
+    // const grupos = await Grupo.find({ _id: { $in: ids } });
+    // const grupos = await Grupo.find({ gid: gid });
+
+    return res.json({
+      ok: true,
+      usuarios: usuarios,
+      matriculas: matriculas,
+      // grupos,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  // const { email, nombre, apellido } = req.body;
+
+  // try {
+  //   const usuario = await Usuario.findOne({ email });
+
+  //   if (!usuario || usuario.admin === false) {
+  //     return res.status(403).json({
+  //       ok: false,
+  //       msg: "Acceso restringido",
+  //     });
+  //   }
+
+  //   const token = await generarJWTAdmin(usuario.id);
+
+  //   return res.json({
+  //     ok: true,
+  //     usuario: usuario,
+  //     token,
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  //   return res.status(500).json({
+  //     ok: false,
+  //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
+  //   });
+  // }
+};
+
+export const obtenerUsuariosNoMatriculados: RequestHandler = async (
+  req,
+  res
+) => {
+  const { uid, gid } = req.params;
+  try {
+    const usuario = await Usuario.findById(uid);
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Usuario no encontrado",
+      });
+    }
+
+    if (usuario.admin === false) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Usuario sin privilegios",
+      });
+    }
+
+    const matriculas = await Matricula.find({ gid: gid });
+
+    const ids = matriculas.map((item) => item.uid);
+
+    const usuarios = await Usuario.find({ _id: { $nin: ids } }).sort({
+      apellido: 1,
+      nombre: 1,
+    });
+
+    return res.json({
+      ok: true,
+      usuarios: usuarios,
+    });
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export const crearUsuarioPassword: RequestHandler = async (req, res) => {

@@ -6,7 +6,7 @@ import Matricula from "../models/matricula";
 import Modulo from "../models/modulo";
 
 export const obtenerActivosModulo: RequestHandler = async (req, res) => {
-  const { uid, mid } = req.params;
+  const { mid, gid } = req.params;
 
   try {
     const modulo = await Modulo.findOne({ _id: mid });
@@ -18,21 +18,19 @@ export const obtenerActivosModulo: RequestHandler = async (req, res) => {
       });
     }
 
-    const matricula = await Matricula.findOne({
-      cid: modulo.cid,
-      uid: uid,
-      online: true,
-    });
+    // const matricula = await Matricula.findOne({
+    //   cid: modulo.cid,
+    //   uid: uid,
+    //   online: true,
+    // });
 
-    if (!matricula) {
-      return res.status(404).json({
-        ok: false,
-        msg: "matricula no encontrada",
-      });
-    }
-    const activos = await Activo.find({ gid: matricula.gid });
-
-    console.log(activos)
+    // if (!matricula) {
+    //   return res.status(404).json({
+    //     ok: false,
+    //     msg: "matricula no encontrada",
+    //   });
+    // }
+    const activos = await Activo.find({ mid: mid, gid: gid });
 
     return res.json({
       ok: true,

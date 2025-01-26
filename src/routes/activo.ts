@@ -9,7 +9,7 @@ import * as activoCtrl from '../controllers/activo';
 const router = Router();
 
 // Cliente
-router.get("/obtener/:mid", validarJWT, activoCtrl.obtenerActivosModulo);
+router.get("/obtener/:mid/:gid", validarJWT, activoCtrl.obtenerActivosModulo);
 router.post('/crear/:pid', [
     check('gid', 'El id de grupo es obligatorio').notEmpty(),
     check('cid', 'El id de curso es obligatorio').notEmpty(),

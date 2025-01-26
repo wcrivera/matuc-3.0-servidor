@@ -56,13 +56,13 @@ export const obtenerGruposCurso: RequestHandler = async (req, res) => {
     if (!grupos) {
       return res.json({
         ok: false,
-        msg: "Estudiante no matriculado",
+        msg: "Grupos no encontrados",
       });
     }
 
     return res.json({
       ok: true,
-      msg: "Estudiante matriculado",
+      msg: "Grupos encontrados",
       grupos
     });
   } catch (error) {
