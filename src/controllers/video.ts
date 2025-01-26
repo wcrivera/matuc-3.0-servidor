@@ -260,11 +260,7 @@ export const editarVideo: RequestHandler = async (req, res) => {
       });
     }
 
-    const { cid } = req.body;
-
-    const matricula = await Matricula.findOne({ uid: uid, cid: cid });
-
-    if (usuario.admin === false && matricula?.rol !== "Administrador") {
+    if (usuario.admin === false) {
       return res.status(403).json({
         ok: false,
         msg: "Usuario sin permiso",
