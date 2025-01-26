@@ -10,9 +10,18 @@ export const obtenerVideosModulo: RequestHandler = async (req, res) => {
   const { mid } = req.params;
 
   try {
-    // const { uid } = req.params;
+    const { uid } = req.params;
 
-    // const modulo = await Modulo.findOne({ _id: mid });
+    const usuario = await Usuario.findOne({ _id: uid });
+
+    console.log(usuario);
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Usuario no registrado",
+      });
+    }
 
     // if (!modulo) {
     //   return res.status(404).json({
@@ -57,6 +66,15 @@ export const obtenerVideosModulo: RequestHandler = async (req, res) => {
     //     url: false,
     //   }
     // );
+
+    if (usuario.admin) {
+      const videos = await Video.find({ mid: mid });
+
+      return res.json({
+        ok: true,
+        videos,
+      });
+    }
 
     const videos = await Video.find(
       { mid: mid },
