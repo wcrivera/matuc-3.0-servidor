@@ -43,34 +43,9 @@ export const obtenerDBQSeccion: RequestHandler = async (req, res) => {
           fecha: -1,
         },
       },
-      {
-        $group: {
-          _id: "$uid",
-          id: { $first: "$_id" },
-          fecha: { $first: "$fecha" },
-          cid: { $first: "$cid" },
-          mid: { $first: "$mid" },
-          bid: { $first: "$bid" },
-          sid: { $first: "$sid" },
-          qid: { $first: "$qid" },
-          uid: { $first: "$uid" },
-          respuesta: { $first: "$respuesta" },
-          estado: { $first: "$estado" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-        },
-      },
-      // {
-      //   $sort: {
-      //     fecha: -1,
-      //   },
-      // },
       // {
       //   $group: {
-      //     _id: "$qid",
+      //     _id: "$uid",
       //     id: { $first: "$_id" },
       //     fecha: { $first: "$fecha" },
       //     cid: { $first: "$cid" },
@@ -78,6 +53,7 @@ export const obtenerDBQSeccion: RequestHandler = async (req, res) => {
       //     bid: { $first: "$bid" },
       //     sid: { $first: "$sid" },
       //     qid: { $first: "$qid" },
+      //     uid: { $first: "$uid" },
       //     respuesta: { $first: "$respuesta" },
       //     estado: { $first: "$estado" },
       //   },
@@ -89,7 +65,7 @@ export const obtenerDBQSeccion: RequestHandler = async (req, res) => {
       // },
     ]);
 
-    console.log(dbqs);
+    console.log(dbqs.length);
 
     // const dbqs = await DBQ.find({
     //   sid: sid,
