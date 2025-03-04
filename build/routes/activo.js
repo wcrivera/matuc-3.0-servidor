@@ -30,7 +30,7 @@ const validar_campos_1 = require("../middlewares/validar-campos");
 const activoCtrl = __importStar(require("../controllers/activo"));
 const router = (0, express_1.Router)();
 // Cliente
-router.get("/obtener/:mid", validar_jwt_1.validarJWT, activoCtrl.obtenerActivosModulo);
+router.get("/obtener/:mid/:gid", validar_jwt_1.validarJWT, activoCtrl.obtenerActivosModulo);
 router.post('/crear/:pid', [
     (0, express_validator_1.check)('gid', 'El id de grupo es obligatorio').notEmpty(),
     (0, express_validator_1.check)('cid', 'El id de curso es obligatorio').notEmpty(),

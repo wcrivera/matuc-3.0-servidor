@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eliminarUsuario = exports.editarUsuario = exports.crearUsuario = exports.crearUsuarioPassword = exports.obtenerUsuariosCurso = exports.loginOutlookAdmin = exports.loginOutlook = exports.renewToken = exports.login = exports.loginPIMU = exports.loginGoogle = void 0;
+exports.eliminarUsuario = exports.editarUsuario = exports.crearUsuario = exports.crearUsuarioPassword = exports.obtenerUsuariosNoMatriculados = exports.obtenerUsuariosGrupo = exports.obtenerUsuariosCurso = exports.loginOutlookAdmin = exports.loginOutlook = exports.renewToken = exports.login = exports.loginPIMU = exports.loginGoogle = void 0;
 const jwt_1 = require("../helpers/jwt");
 const usuario_1 = __importDefault(require("../models/usuario"));
 const matricula_1 = __importDefault(require("../models/matricula"));
@@ -471,7 +471,8 @@ const obtenerUsuariosCurso = (req, res) => __awaiter(void 0, void 0, void 0, fun
             apellido: 1,
             nombre: 1,
         });
-        const grupos = yield grupo_1.default.find({ _id: { $in: ids } });
+        // const grupos = await Grupo.find({ _id: { $in: ids } });
+        const grupos = yield grupo_1.default.find({ cid: cid });
         return res.json({
             ok: true,
             usuarios: usuarios,
@@ -506,6 +507,90 @@ const obtenerUsuariosCurso = (req, res) => __awaiter(void 0, void 0, void 0, fun
     // }
 });
 exports.obtenerUsuariosCurso = obtenerUsuariosCurso;
+const obtenerUsuariosGrupo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { gid, uid } = req.params;
+    try {
+        const usuario = yield usuario_1.default.findById(uid);
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: "Usuario no encontrado",
+            });
+        }
+        const matriculas = yield matricula_1.default.find({ gid: gid });
+        const ids = matriculas.map((item) => item.uid);
+        const usuarios = yield usuario_1.default.find({ _id: { $in: ids } }).sort({
+            apellido: 1,
+            nombre: 1,
+        });
+        // const grupos = await Grupo.find({ _id: { $in: ids } });
+        // const grupos = await Grupo.find({ gid: gid });
+        return res.json({
+            ok: true,
+            usuarios: usuarios,
+            matriculas: matriculas,
+            // grupos,
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+    // const { email, nombre, apellido } = req.body;
+    // try {
+    //   const usuario = await Usuario.findOne({ email });
+    //   if (!usuario || usuario.admin === false) {
+    //     return res.status(403).json({
+    //       ok: false,
+    //       msg: "Acceso restringido",
+    //     });
+    //   }
+    //   const token = await generarJWTAdmin(usuario.id);
+    //   return res.json({
+    //     ok: true,
+    //     usuario: usuario,
+    //     token,
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   return res.status(500).json({
+    //     ok: false,
+    //     msg: "Estamos teniendo problemas, vuelva a intentarlo más tarde",
+    //   });
+    // }
+});
+exports.obtenerUsuariosGrupo = obtenerUsuariosGrupo;
+const obtenerUsuariosNoMatriculados = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid, gid } = req.params;
+    try {
+        const usuario = yield usuario_1.default.findById(uid);
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: "Usuario no encontrado",
+            });
+        }
+        if (usuario.admin === false) {
+            return res.status(404).json({
+                ok: false,
+                msg: "Usuario sin privilegios",
+            });
+        }
+        const matriculas = yield matricula_1.default.find({ gid: gid });
+        const ids = matriculas.map((item) => item.uid);
+        const usuarios = yield usuario_1.default.find({ _id: { $nin: ids } }).sort({
+            apellido: 1,
+            nombre: 1,
+        });
+        return res.json({
+            ok: true,
+            usuarios: usuarios,
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.obtenerUsuariosNoMatriculados = obtenerUsuariosNoMatriculados;
 const crearUsuarioPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { uid } = req.params;

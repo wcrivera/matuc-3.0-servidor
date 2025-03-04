@@ -18,7 +18,7 @@ const activo_1 = __importDefault(require("../models/activo"));
 const matricula_1 = __importDefault(require("../models/matricula"));
 const modulo_1 = __importDefault(require("../models/modulo"));
 const obtenerActivosModulo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { uid, mid } = req.params;
+    const { mid, gid } = req.params;
     try {
         const modulo = yield modulo_1.default.findOne({ _id: mid });
         if (!modulo) {
@@ -27,18 +27,18 @@ const obtenerActivosModulo = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 msg: "modulo no encontrado",
             });
         }
-        const matricula = yield matricula_1.default.findOne({
-            cid: modulo.cid,
-            uid: uid,
-            online: true,
-        });
-        if (!matricula) {
-            return res.status(404).json({
-                ok: false,
-                msg: "matricula no encontrada",
-            });
-        }
-        const activos = yield activo_1.default.find({ gid: matricula.gid });
+        // const matricula = await Matricula.findOne({
+        //   cid: modulo.cid,
+        //   uid: uid,
+        //   online: true,
+        // });
+        // if (!matricula) {
+        //   return res.status(404).json({
+        //     ok: false,
+        //     msg: "matricula no encontrada",
+        //   });
+        // }
+        const activos = yield activo_1.default.find({ mid: mid, gid: gid });
         return res.json({
             ok: true,
             activos,

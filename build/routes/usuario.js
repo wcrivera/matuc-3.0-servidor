@@ -39,7 +39,8 @@ router.post('/pimu', validar_jwt_1.validarPJWT, usuarioCtrl.loginPIMU);
 router.put("/editar/:uid", usuarioCtrl.editarUsuario);
 // ADMINISTRADOR
 router.post("/admin/outlook", usuarioCtrl.loginOutlookAdmin);
-router.get("/admin/obtener/:cid", validar_jwt_1.validarAdminJWT, usuarioCtrl.obtenerUsuariosCurso);
+router.get("/admin/obtener/:gid", validar_jwt_1.validarAdminJWT, usuarioCtrl.obtenerUsuariosGrupo);
+router.get("/admin/obtener-no-matriculado/:gid", validar_jwt_1.validarAdminJWT, usuarioCtrl.obtenerUsuariosNoMatriculados);
 router.post("/admin/crear/password", [
     (0, express_validator_1.check)("nombre", "El nombre es obligatorio").notEmpty(),
     (0, express_validator_1.check)("apellido", "El apellido es obligatorio").notEmpty(),

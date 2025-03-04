@@ -28,6 +28,6 @@ const validar_jwt_1 = require("../middlewares/validar-jwt");
 const estadisticaCtrl = __importStar(require("../controllers/estadistica"));
 const router = (0, express_1.Router)();
 // Cliente
-router.get("/obtener/:gid/:sid", validar_jwt_1.validarJWT, estadisticaCtrl.obtenerEstadistica);
+router.get("/obtener/:gid/:sid", validar_jwt_1.validarJWT, estadisticaCtrl.obtenerDBQSeccion);
 // Admin
 exports.default = router;

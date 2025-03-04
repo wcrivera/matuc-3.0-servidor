@@ -61,12 +61,12 @@ const obtenerGruposCurso = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (!grupos) {
             return res.json({
                 ok: false,
-                msg: "Estudiante no matriculado",
+                msg: "Grupos no encontrados",
             });
         }
         return res.json({
             ok: true,
-            msg: "Estudiante matriculado",
+            msg: "Grupos encontrados",
             grupos
         });
     }

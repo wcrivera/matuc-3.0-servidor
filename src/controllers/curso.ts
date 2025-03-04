@@ -29,34 +29,33 @@ export const obtenerCursos: RequestHandler = async (req, res) => {
       });
     }
 
-    const cursosUsuario = (await Matricula.find({ uid: uid })).map((item) =>
-      item.cid.toString()
-    );
+    // ALTERNATIVA 1: Solo los cursos en los que el usuario está matriculado
 
-    const cursos = await Curso.find(
-      { _id: { $in: cursosUsuario } }
-      // { publico: true, activo: true }
-    ).sort("sigla");
-
-    // console.log(cursos);
-
-    return res.json({
-      ok: true,
-      msg: "Cursos obtenidos",
-      cursos,
-    });
-
-    // Todos los cursos publicos y activos
-
-    // const cursos = await Curso.find({ publico: true, activo: true }).sort(
-    //   "sigla"
+    // const cursosUsuario = (await Matricula.find({ uid: uid })).map((item) =>
+    //   item.cid.toString()
     // );
+
+    // const cursos = await Curso.find(
+    //   { _id: { $in: cursosUsuario } }
+    // ).sort("sigla");
 
     // return res.json({
     //   ok: true,
     //   msg: "Cursos obtenidos",
     //   cursos,
     // });
+
+    // ALTERNATIVA 2: Todos los cursos que están activos y públicos
+
+    const cursos = await Curso.find({ publico: true, activo: true }).sort(
+      "sigla"
+    );
+
+    return res.json({
+      ok: true,
+      msg: "Cursos obtenidos",
+      cursos,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

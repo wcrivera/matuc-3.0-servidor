@@ -191,6 +191,7 @@ const obtenerMatriculasCurso = (req, res) => __awaiter(void 0, void 0, void 0, f
 exports.obtenerMatriculasCurso = obtenerMatriculasCurso;
 const crearMatricula = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params;
+    console.log(uid);
     try {
         const usuario = yield usuario_1.default.findById(uid);
         if (!usuario) {
@@ -205,9 +206,10 @@ const crearMatricula = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 msg: "Usuario sin permiso",
             });
         }
-        const { cid, uid: uidUsuario } = req.body;
+        const { cid, uid: uidUsuario, gid: gidUsuario } = req.body;
         const matriculaEncontrada = yield matricula_1.default.findOne({
             cid: cid,
+            gid: gidUsuario,
             uid: uidUsuario,
         });
         if (matriculaEncontrada) {

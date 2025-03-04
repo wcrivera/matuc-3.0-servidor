@@ -22,8 +22,15 @@ const seccion_1 = __importDefault(require("../models/seccion"));
 const obtenerVideosModulo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { mid } = req.params;
     try {
-        // const { uid } = req.params;
-        // const modulo = await Modulo.findOne({ _id: mid });
+        const { uid } = req.params;
+        const usuario = yield usuario_1.default.findOne({ _id: uid });
+        console.log(usuario);
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: "Usuario no registrado",
+            });
+        }
         // if (!modulo) {
         //   return res.status(404).json({
         //     ok: false,
@@ -62,6 +69,13 @@ const obtenerVideosModulo = (req, res) => __awaiter(void 0, void 0, void 0, func
         //     url: false,
         //   }
         // );
+        if (usuario.admin) {
+            const videos = yield video_1.default.find({ mid: mid });
+            return res.json({
+                ok: true,
+                videos,
+            });
+        }
         const videos = yield video_1.default.find({ mid: mid }, {
             cid: false,
             mid: false,
@@ -220,9 +234,7 @@ const editarVideo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 msg: "Usuario no registrado",
             });
         }
-        const { cid } = req.body;
-        const matricula = yield matricula_1.default.findOne({ uid: uid, cid: cid });
-        if (usuario.admin === false && (matricula === null || matricula === void 0 ? void 0 : matricula.rol) !== "Administrador") {
+        if (usuario.admin === false) {
             return res.status(403).json({
                 ok: false,
                 msg: "Usuario sin permiso",

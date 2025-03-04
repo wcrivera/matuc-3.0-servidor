@@ -40,18 +40,41 @@ const obtenerModulosCurso = (req, res) => __awaiter(void 0, void 0, void 0, func
                 modulos: [moduloNoticias, ...modulos],
             });
         }
-        const modulos = yield modulo_1.default.find({ cid: cid, activo: true }).sort({ modulo: 1 });
-        const moduloNoticias = {
-            mid: "0",
+        const matricula = yield matricula_1.default.findOne({
             cid: cid,
-            modulo: 0,
-            nombre: "Noticias",
-        };
-        return res.json({
-            ok: true,
-            msg: "Módulos obtenidos",
-            modulos: [moduloNoticias, ...modulos],
+            uid: uid,
+            rol: "Profesor",
         });
+        if (!matricula) {
+            const modulos = yield modulo_1.default.find({ cid: cid, activo: true }).sort({
+                modulo: 1,
+            });
+            const moduloNoticias = {
+                mid: "0",
+                cid: cid,
+                modulo: 0,
+                nombre: "Noticias",
+            };
+            return res.json({
+                ok: true,
+                msg: "Módulos obtenidos",
+                modulos: [moduloNoticias, ...modulos],
+            });
+        }
+        else {
+            const modulos = yield modulo_1.default.find({ cid: cid }).sort({ modulo: 1 });
+            const moduloNoticias = {
+                mid: "0",
+                cid: cid,
+                modulo: 0,
+                nombre: "Noticias",
+            };
+            return res.json({
+                ok: true,
+                msg: "Módulos obtenidos",
+                modulos: [moduloNoticias, ...modulos],
+            });
+        }
     }
     catch (error) {
         console.log(error);
