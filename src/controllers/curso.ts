@@ -47,7 +47,7 @@ export const obtenerCursos: RequestHandler = async (req, res) => {
 
     // ALTERNATIVA 2: Todos los cursos que están activos y públicos
 
-    const cursos = await Curso.find({ publico: true, activo: true }).sort(
+    const cursos = await Curso.find({ activo: true }).sort(
       "sigla"
     );
 
