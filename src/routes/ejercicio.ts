@@ -10,6 +10,7 @@ const router = Router();
 
 // Cliente
 router.get('/obtener/:mid', validarJWT, ejercicioCtrl.obtenerEjerciciosModulo);
+router.get('/obtener/evaluaciones/:mid', validarJWT, ejercicioCtrl.obtenerEvaluacionesModulo);
 // Admin
 router.get('/admin/obtener/:mid', validarAdminJWT, ejercicioCtrl.obtenerEjerciciosModulo);
 router.post('/admin/crear', [

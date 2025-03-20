@@ -8,7 +8,27 @@ export const obtenerEjerciciosModulo: RequestHandler = async (req, res) => {
   const { uid, mid } = req.params;
 
   try {
-    const ejercicios = await Ejercicio.find({ mid: mid }).sort({ numero: 1 });
+    const ejercicios = await Ejercicio.find({ mid: mid, evaluacion: false }).sort({ numero: 1 });
+
+    return res.json({
+      ok: true,
+      ejercicios: ejercicios,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
+export const obtenerEvaluacionesModulo: RequestHandler = async (req, res) => {
+
+  const { uid, mid } = req.params;
+
+  try {
+    const ejercicios = await Ejercicio.find({ mid: mid, evaluacion: true }).sort({ numero: 1 });
 
     return res.json({
       ok: true,

@@ -9,6 +9,7 @@ interface Ejercicio {
   enunciado?: string;
   titulo?: string;
   activo: boolean;
+  evaluacion: boolean;
 }
 
 const EjercicioSchema = new Schema<Ejercicio>({
@@ -46,6 +47,11 @@ const EjercicioSchema = new Schema<Ejercicio>({
     trim: true,
   },
   activo: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  evaluacion: {
     type: Boolean,
     required: true,
     default: false,

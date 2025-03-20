@@ -25,6 +25,28 @@ export const obtenerPreguntasModulo: RequestHandler = async (req, res) => {
   }
 };
 
+export const obtenerPreguntasEvaluacionModulo: RequestHandler = async (req, res) => {
+  const { uid, mid } = req.params;
+
+  try {
+    const preguntas = await Pregunta.find({ mid: mid }).sort({ numero: 1 });
+
+    return res.json({
+      ok: true,
+      preguntas: preguntas,
+    });
+
+    
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 // ADMINISTRADOR
 export const crearPregunta: RequestHandler = async (req, res) => {
   try {
