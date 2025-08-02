@@ -86,7 +86,7 @@ export const obtenerDiapositivasModulo: RequestHandler = async (req, res) => {
   }
 };
 
-export const obtenerSeccionesCursoPublico: RequestHandler = async (req, res) => {
+export const obtenerDiapositivasSeccionPublico: RequestHandler = async (req, res) => {
 const { sid } = req.params;
 
   try {
