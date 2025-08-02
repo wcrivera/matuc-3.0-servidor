@@ -13,6 +13,7 @@ router.get('/obtener/:mid', validarJWT, diapositivaCtrl.obtenerDiapositivasModul
 router.get('/obtener/seccion/:sid', validarJWT, diapositivaCtrl.obtenerDiapositivaSeccion);
 router.get('/obtener/bloque/:bid', validarJWT, diapositivaCtrl.obtenerDiapositivasBloque);
 router.get('/obtener-publico/:bid', diapositivaCtrl.obtenerDiapositivasBloquePublico);
+router.get('/obtener-publico/curso/:sid', diapositivaCtrl.obtenerDiapositivasSeccionPublico);
 // Admin
 router.get('/admin/obtener/seccion/:sid', validarAdminJWT, diapositivaCtrl.obtenerDiapositivaSeccion);
 router.get('/admin/obtener/:mid', validarAdminJWT, diapositivaCtrl.obtenerDiapositivasModulo);
