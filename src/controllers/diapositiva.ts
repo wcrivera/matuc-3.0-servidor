@@ -86,6 +86,36 @@ export const obtenerDiapositivasModulo: RequestHandler = async (req, res) => {
   }
 };
 
+export const obtenerSeccionesCursoPublico: RequestHandler = async (req, res) => {
+const { sid } = req.params;
+
+  try {
+    const activos = (await Activo.find({ sid: sid }))
+      .filter((item) => item.diapositiva.activo)
+      .map((item) => item.sid.toString());
+
+    if (activos.length === 0) {
+      return res.json({
+        ok: false,
+        msg: "Diapositiva no existe",
+      });
+    }
+
+    const diapositivas = await Diapositiva.find({ sid: { $in: activos } });
+
+    return res.json({
+      ok: true,
+      diapositivas,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 export const obtenerDiapositivasBloque: RequestHandler = async (req, res) => {
   const { bid } = req.params;
 
