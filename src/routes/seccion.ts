@@ -11,6 +11,7 @@ const router = Router();
 // Cliente
 router.get("/obtener/:mid", validarJWT, seccionCtrl.obtenerSeccionesModulo);
 router.get('/obtener-publico/:bid', seccionCtrl.obtenerSeccionesBloquePublico);
+router.get('/obtener-publico/curso/:cid', seccionCtrl.obtenerSeccionesCursoPublico);
 
 // Admin
 router.get(
