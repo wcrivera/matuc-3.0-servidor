@@ -90,18 +90,8 @@ export const obtenerSeccionesCursoPublico: RequestHandler = async (req, res) => 
 const { sid } = req.params;
 
   try {
-    const activos = (await Activo.find({ sid: sid }))
-      .filter((item) => item.diapositiva.activo)
-      .map((item) => item.sid.toString());
 
-    if (activos.length === 0) {
-      return res.json({
-        ok: false,
-        msg: "Diapositiva no existe",
-      });
-    }
-
-    const diapositivas = await Diapositiva.find({ sid: { $in: activos } });
+    const diapositivas = await Diapositiva.find({ sid: sid });
 
     return res.json({
       ok: true,
