@@ -44,6 +44,24 @@ export const obtenerSeccionesBloquePublico: RequestHandler = async (req, res) =>
   }
 };
 
+export const obtenerSeccionesCursoPublico: RequestHandler = async (req, res) => {
+  const { cid } = req.params;
+
+  try {
+
+    const secciones = await Seccion.find({ cid: cid }).sort({ seccion: 1 });
+
+    return res.json({
+      ok: true,
+      secciones: secciones,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
 // ADMINISTRADOR
 export const crearSeccion: RequestHandler = async (req, res) => {
   try {
