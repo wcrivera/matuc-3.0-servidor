@@ -93,11 +93,12 @@ const { sid } = req.params;
 
   try {
 
-const diapositiva = await Diapositiva.findOne({ sid: sid });
+const diapositiva = await Diapositiva.findOne({ _id: sid });
       return res.json({
         ok: true,
         diapositiva,
       });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({
