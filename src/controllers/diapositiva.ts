@@ -89,11 +89,9 @@ export const obtenerDiapositivasModulo: RequestHandler = async (req, res) => {
 export const obtenerDiapositivasSeccionPublico: RequestHandler = async (req, res) => {
 const { sid } = req.params;
 
-  
-
   try {
 
-const diapositiva = await Diapositiva.findOne({ _id: sid });
+      const diapositiva = await Diapositiva.findOne({ sid: sid });
       return res.json({
         ok: true,
         diapositiva,
