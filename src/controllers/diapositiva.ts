@@ -5,6 +5,8 @@ import Matricula from "../models/matricula";
 // import Modulo from "../models/modulo";
 import Seccion from "../models/seccion";
 import Activo from "../models/activo";
+import Bloque from "../models/bloque";
+import Curso from "../models/curso";
 
 export const obtenerDiapositivasModulo: RequestHandler = async (req, res) => {
   const { mid } = req.params;
@@ -77,26 +79,6 @@ export const obtenerDiapositivasModulo: RequestHandler = async (req, res) => {
       ok: true,
       diapositivas,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      ok: false,
-      msg: "Hable con el administrador",
-    });
-  }
-};
-
-export const obtenerDiapositivasSeccionPublico: RequestHandler = async (req, res) => {
-const { sid } = req.params;
-
-  try {
-
-      const diapositiva = await Diapositiva.findOne({ sid: sid });
-      return res.json({
-        ok: true,
-        diapositiva,
-      });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -230,7 +212,23 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
   const { bid } = req.params;
 
   try {
-    // const diapositivas = await Diapositiva.find({ bid: bid, publico: true });
+
+    const bloque = await Bloque.findOne({ _id: bid });
+    if (!bloque) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Bloque no encontrado",
+      });
+    }
+    const curso = await Curso.findOne({ _id: bloque.cid });
+
+    if (!curso) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Curso no encontrado",
+      });
+    }
+
     const diapositivas = await Diapositiva.find({ bid: bid });
 
     if (diapositivas.length === 0) {
@@ -243,6 +241,60 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
     return res.json({
       ok: true,
       diapositivas,
+      bloque,
+      curso
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
+export const obtenerDiapositivasSeccionPublico: RequestHandler = async (req, res) => {
+  const { sid } = req.params;
+
+  try {
+
+    const seccion = await Seccion.findOne({ _id: sid });
+    if (!seccion) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Sección no encontrada",
+      });
+    }
+
+    const bloque = await Bloque.findOne({ _id: seccion.bid });
+    if (!bloque) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Bloque no encontrado",
+      });
+    }
+
+    const curso = await Curso.findOne({ _id: seccion.cid });
+    if (!curso) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Curso no encontrado",
+      });
+    }
+    const diapositiva = await Diapositiva.findOne({ sid: sid });
+    if (!diapositiva) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Diapositiva no encontrada",
+      });
+    }
+
+    return res.json({
+      ok: true,
+      diapositiva,
+      seccion,
+      bloque,
+      curso
     });
   } catch (error) {
     console.log(error);
@@ -255,7 +307,7 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
 
 // ADMINISTRADOR
 export const crearDiapositiva: RequestHandler = async (req, res) => {
-  
+
   try {
     const { uid } = req.params;
     const usuario = await Usuario.findById(uid);
