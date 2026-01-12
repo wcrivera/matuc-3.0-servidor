@@ -131,7 +131,21 @@ export const obtenerDiapositivasBloque: RequestHandler = async (req, res) => {
       });
     }
 
-    const diapositivas = await Diapositiva.find({ sid: { $in: activos } });
+    // const diapositivas = await Diapositiva.find({ sid: { $in: activos } });
+
+        const diapositivas = await Diapositiva.aggregate([
+      { $match: { sid: { $in: activos } } },
+      {
+        $lookup: {
+          from: 'secciones', // nombre de la colección (en minúscula y plural)
+          localField: 'sid',
+          foreignField: 'sid',
+          as: 'seccion_info'
+        }
+      },
+      { $unwind: '$seccion_info' },
+      { $sort: { 'seccion_info.seccion': 1 } }
+    ]);
 
     // console.log(diapositivas)
 
