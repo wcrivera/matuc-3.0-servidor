@@ -243,7 +243,21 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
       });
     }
 
-    const diapositivas = await Diapositiva.find({ bid: bid });
+    // const diapositivas = await Diapositiva.find({ bid: bid });
+
+    const diapositivas = await Diapositiva.aggregate([
+      { $match: { bid: bid } },
+      {
+        $lookup: {
+          from: 'secciones', // nombre de la colección (en minúscula y plural)
+          localField: 'sid',
+          foreignField: 'sid',
+          as: 'seccion_info'
+        }
+      },
+      { $unwind: '$seccion_info' },
+      { $sort: { 'seccion_info.seccion': 1 } }
+    ]);
 
     if (diapositivas.length === 0) {
       return res.json({
