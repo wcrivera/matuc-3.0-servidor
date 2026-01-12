@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { ObjectId } from "mongodb";
 import Diapositiva from "../models/diapositiva";
 import Usuario from "../models/usuario";
 import Matricula from "../models/matricula";
@@ -124,22 +125,36 @@ export const obtenerDiapositivasBloque: RequestHandler = async (req, res) => {
       .filter((item) => item.diapositiva.activo)
       .map((item) => item.sid.toString());
 
-    if (activos.length === 0) {
-      return res.json({
-        ok: false,
-        msg: "Diapositiva no existe",
-      });
-    }
+    // if (activos.length === 0) {
+    //   return res.json({
+    //     ok: false,
+    //     msg: "Diapositiva no existe",
+    //   });
+    // }
 
     // const diapositivas = await Diapositiva.find({ sid: { $in: activos } });
 
-        const diapositivas = await Diapositiva.aggregate([
+    // const diapositivas = await Diapositiva.aggregate([
+    //   { $match: { sid: { $in: activos } } },
+    //   {
+    //     $lookup: {
+    //       from: 'secciones', // nombre de la colección (en minúscula y plural)
+    //       localField: 'sid',
+    //       foreignField: 'sid',
+    //       as: 'seccion_info'
+    //     }
+    //   },
+    //   { $unwind: '$seccion_info' },
+    //   { $sort: { 'seccion_info.seccion': 1 } }
+    // ]);
+
+     const diapositivas = await Diapositiva.aggregate([
       { $match: { sid: { $in: activos } } },
       {
         $lookup: {
-          from: 'secciones', // nombre de la colección (en minúscula y plural)
+          from: 'seccions', // nombre de la colección (en minúscula y plural)
           localField: 'sid',
-          foreignField: 'sid',
+          foreignField: '_id',
           as: 'seccion_info'
         }
       },
@@ -246,12 +261,12 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
     // const diapositivas = await Diapositiva.find({ bid: bid });
 
     const diapositivas = await Diapositiva.aggregate([
-      { $match: { bid: bid } },
+      { $match: { bid: new ObjectId(bid) } },
       {
         $lookup: {
-          from: 'secciones', // nombre de la colección (en minúscula y plural)
+          from: 'seccions', // nombre de la colección (en minúscula y plural)
           localField: 'sid',
-          foreignField: 'sid',
+          foreignField: '_id',
           as: 'seccion_info'
         }
       },
@@ -259,19 +274,13 @@ export const obtenerDiapositivasBloquePublico: RequestHandler = async (
       { $sort: { 'seccion_info.seccion': 1 } }
     ]);
 
-    if (diapositivas.length === 0) {
-      return res.json({
-        ok: false,
-        msg: "Diapositiva no existe",
-      });
-    }
-
     return res.json({
       ok: true,
-      diapositivas,
+      diapositivas: diapositivas,
       bloque,
       curso
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({
